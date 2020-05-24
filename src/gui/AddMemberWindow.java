@@ -100,21 +100,21 @@ import javafx.event.*;
 				System.out.println("cust name info " + custName);
 				System.out.println("cust street " + custStreet);
 				//set up a Customer
-				Customer aCustomer = new Customer(custName,custStreet,custCity,custState,zip, repNum);
+//				Customer aCustomer = new Customer(custName,custStreet,custCity,custState,zip, repNum);
 				//debug the data
-				System.out.println(aCustomer);
+//				System.out.println(aCustomer);
 				//ask the CustomerIO to store the new Customer data
 				try {
-					Credentials theCredentials = LoginWindow.displayLoginWindow();
-				    CustomerIO.addCustomer(theCredentials, aCustomer);
+//					Credentials theCredentials = LoginWindow.displayLoginWindow();//
+//				    CustomerIO.addCustomer(theCredentials, aCustomer);
 				    System.out.println("Back in the View --- record was added");
-				    AlertBox.display("REQUEST STATUS", "Record Added");
+//				    AlertBox.display("REQUEST STATUS", "Record Added");
 				    
 				    parentWindow.close();
 				    
 				}
 				catch(SQLException exception) {
-					AlertBox.display("REQUEST STATUS","Add Customer Unsuccessful - SQL Exception" + exception.getMessage());
+//					AlertBox.display("REQUEST STATUS","Add Customer Unsuccessful - SQL Exception" + exception.getMessage());
 				}
 				
 			}
@@ -124,4 +124,4 @@ import javafx.event.*;
 	}
 
 
-}
+//}
