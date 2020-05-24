@@ -10,9 +10,7 @@ import javafx.scene.*;
 
 import java.sql.SQLException;
 
-import Business.Credentials;
-import Business.Member;
-import data.MemberIO;
+
 import javafx.event.*;
 
 	public class AddMemberWindow extends Stage{
