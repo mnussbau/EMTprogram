@@ -7,10 +7,12 @@ import javafx.stage.Stage;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import javafx.scene.*;
-
 import java.sql.SQLException;
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> branch 'master' of https://github.com/telbaum/HatzolahApp.git
 import javafx.event.*;
 
 	public class AddMemberWindow extends Stage{
