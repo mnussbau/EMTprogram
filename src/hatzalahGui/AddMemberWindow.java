@@ -1,4 +1,4 @@
-package gui;
+package hatzalahGui;
 
 
 	//hello
@@ -104,19 +104,19 @@ import javafx.event.*;
 				//debug the data
 //				System.out.println(aCustomer);
 				//ask the CustomerIO to store the new Customer data
-				try {
+//				try {
 //					Credentials theCredentials = LoginWindow.displayLoginWindow();//
 //				    CustomerIO.addCustomer(theCredentials, aCustomer);
 				    System.out.println("Back in the View --- record was added");
 //				    AlertBox.display("REQUEST STATUS", "Record Added");
 				    
-				    parentWindow.close();
-				    
-				}
-				catch(SQLException exception) {
-//					AlertBox.display("REQUEST STATUS","Add Customer Unsuccessful - SQL Exception" + exception.getMessage());
-				}
-				
+//				    parentWindow.close();
+//				    
+//				}
+//				catch(SQLException exception) {
+////					AlertBox.display("REQUEST STATUS","Add Customer Unsuccessful - SQL Exception" + exception.getMessage());
+//				}
+//
 			}
 			
 		}

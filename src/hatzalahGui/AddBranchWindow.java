@@ -1,4 +1,4 @@
-package gui;
+package hatzalahGui;
 
 public class AddBranchWindow {
 
