@@ -1,5 +1,5 @@
 module hatzolahApp {
-	requires transitive javafx.graphics;
+	requires javafx.graphics;
 	requires javafx.base;
 	requires javafx.controls;
 	requires java.sql;
