@@ -23,6 +23,8 @@ public class MainClass extends Application {
 		mainWindow.setWidth(600);
 		mainWindow.setTitle("Hatzolah");
 		BorderPane pane = new BorderPane();
+		pane.setStyle("-fx-background-color: Azure");
+		
 		Menu addMenu = new Menu("Add");
 		Menu updateMenu = new Menu("Update");
 		Menu viewMenu = new Menu("View");
@@ -70,6 +72,7 @@ public class MainClass extends Application {
 		addMenu.getItems().addAll(addBranchMenuItem, addBusMenuItem, addCallMenuItem, addCredentialsMenuItem,
 				addDonationMenuItem, addDonorMenuItem, addJobTitleMenuItem, addMemberMenuItem,
 				addPurchaseEquipmentMenuItem, addSymptomMenuItem);
+		
 		MenuItem updateBusInfoMenuItem = new MenuItem("Bus Info");
 		updateBusInfoMenuItem.setOnAction(e -> {
 			new UpdateBusWindow();
@@ -85,6 +88,7 @@ public class MainClass extends Application {
 		updateMenu.getItems().addAll(updateBusInfoMenuItem, updateDonorInfoMenuItem, memberInfoMenuItem);
 
 		MenuBar theMenuBar = new MenuBar();
+		theMenuBar.setStyle("-fx-background-color: Lavender");
 		theMenuBar.getMenus().addAll(addMenu, updateMenu, viewMenu);
 		pane.setTop(theMenuBar);
 		ImageView imageView = new ImageView();

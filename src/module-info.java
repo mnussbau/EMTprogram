@@ -3,6 +3,6 @@ module hatzolahApp {
 	requires javafx.base;
 	requires javafx.controls;
 	requires java.sql;
-	exports hatzalahGui;
+	opens hatzalahGui; //took away the warning
 	requires java.desktop;
 }
