@@ -1,15 +1,8 @@
 package hatzalahGui;
 
-
-	//hello
-
 import javafx.stage.Stage;
-import javafx.scene.layout.*;
-import javafx.scene.control.*;
-import javafx.scene.*;
-import javafx.event.*;
 
-	public class AddMemberWindow extends Stage{
+public class AddMemberWindow extends Stage{
 //	      TextField custNameField;
 //	      TextField custStreetField;
 //	      TextField custCityField;
