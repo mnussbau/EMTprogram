@@ -12,6 +12,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -20,6 +21,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class AddCallWindow extends Stage {
 	TextField branchName;
@@ -34,7 +36,8 @@ public class AddCallWindow extends Stage {
 	ComboBox<Character> choice;
 	TextField VIN;
 
-	public AddCallWindow() { //you would pass it the mainWindow from main if you want it to be in the same Stage
+	public AddCallWindow() { // you would pass it the mainWindow from main if you want it to be in the same
+								// Stage
 		Label vinLabel = new Label("VIN:");
 		vinLabel.setVisible(false);
 		Character yesNo[] = { 'Y', 'N' };
@@ -59,6 +62,14 @@ public class AddCallWindow extends Stage {
 		grid.add(new Label("Date of Call: "), 1, 0);
 		dateOfCall = new DatePicker();
 		dateOfCall.setValue(LocalDate.now());
+
+		dateOfCall.setDayCellFactory(picker -> new DateCell() {
+			public void updateItem(LocalDate date, boolean empty) {
+				super.updateItem(date, empty);
+				LocalDate today = LocalDate.now();
+				setDisable(empty || date.compareTo(today) > 0);
+			}
+		});
 		grid.add(dateOfCall, 1, 1);
 		grid.add(new Label("Street Address: "), 0, 4);
 		streetAddress = new TextField();
@@ -93,9 +104,9 @@ public class AddCallWindow extends Stage {
 		okButton.setStyle("-fx-background-color: Lavender");
 		okButton.setOnAction(e -> {
 			System.out.println(branchName.getText().isBlank());
-			if (!(branchName.getText().isBlank()|| streetAddress.getText().isBlank() || city.getText().isBlank()
-					|| state.getText().isBlank()|| zip.getText().isBlank() || fname.getText().isBlank() || lname.getText().isBlank() || 
-					age.getText().isBlank())) {
+			if (!(branchName.getText().isBlank() || streetAddress.getText().isBlank() || city.getText().isBlank()
+					|| state.getText().isBlank() || zip.getText().isBlank() || fname.getText().isBlank()
+					|| lname.getText().isBlank() || age.getText().isBlank())) {
 				try {
 					addCallData(branchName.getText(), dateOfCall.getValue(), streetAddress.getText(), city.getText(),
 							state.getText(), zip.getText(), fname.getText(), lname.getText(),
