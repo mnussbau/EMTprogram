@@ -42,6 +42,7 @@ public class AddCallWindow extends Stage {
 		vinLabel.setVisible(false);
 		Character yesNo[] = { 'Y', 'N' };
 		choice = new ComboBox<Character>(FXCollections.observableArrayList(yesNo));
+		choice.setStyle("-fx-background-color: Lavender");
 		choice.setOnAction(e -> {
 			if (choice.getValue() == 'Y') {
 				VIN.setVisible(true);
