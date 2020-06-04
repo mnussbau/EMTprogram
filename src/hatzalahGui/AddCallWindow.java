@@ -118,8 +118,8 @@ public class AddCallWindow extends Stage {
 		backButton.setOnAction(e -> this.close());
 		HBox hbox = new HBox();
 		hbox.getChildren().addAll(okButton, backButton);
-		HBox.setMargin(okButton, new Insets(5, 5, 5, 5));
-		HBox.setMargin(backButton, new Insets(5, 5, 5, 5));
+		HBox.setMargin(okButton, new Insets(2, 2, 2, 2));
+		HBox.setMargin(backButton, new Insets(2, 2, 2, 2));
 
 		borderLayout.setBottom(hbox);
 		Scene scene = new Scene(borderLayout);
