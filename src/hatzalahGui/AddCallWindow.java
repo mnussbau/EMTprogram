@@ -3,7 +3,9 @@ package hatzalahGui;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 
 import javafx.collections.FXCollections;
@@ -59,19 +61,22 @@ public class AddCallWindow extends Stage {
 		this.setScene(scene);
 		this.initModality(Modality.APPLICATION_MODAL);
 		this.show();
-		int vin = 12345;
+		String vin = null;
+		int id =-1;
 		try {
-			addCallData(branchName.getText(), LocalDate.now(), "12345", "Brooklyn", "NY",
-					"11230", "Chaya", "Zitwer", 20, 'Y', vin);
+			addCallData("myBranch", LocalDate.now(), "456789", "Brooklyn", "NY",
+					"11230", "Chaya", "Zitwer", 20, 'N', vin, id);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		
+		System.out.println("THE ID IS THIS NUMBER: "+id);
 	}
 	
 	
-	public static void addCallData(String branchName, LocalDate callreceived, String streetaddress, String city, String state, String zip, String fname, String lname, int age, Character choice, int vin2) throws SQLException, Exception {
-		String url = "jdbc:sqlserver://localhost:1433;instance=SQLEXPRESS01;databaseName=TzedakaCampaign;integratedSecurity=true";
+	public static void addCallData(String branchName, LocalDate callreceived, String streetaddress, String city, String state, String zip, String fname, String lname, Integer age, Character choice, String vin2, Integer id) throws SQLException, Exception {
+		String url = "jdbc:sqlserver://localhost:1433;instance=SQLEXPRESS01;databaseName=Hatzolah;integratedSecurity=true";
 		Connection dbConnection = DriverManager.getConnection(url);
 
 		//branchname
@@ -81,31 +86,59 @@ public class AddCallWindow extends Stage {
 		//transferred Y or no
 		//vin
 		//notes
+		
 		try {
 			dbConnection.setAutoCommit(false);
 			CallableStatement cStatement;
 
 			String sql = "{call usp_addCall(?,?,?,?,?,?,?,?,?,?,?,?)}";
 			cStatement = dbConnection.prepareCall(sql);
+			
 			// set up the parameters to the procedure
+			/*
+			 * @branchName varchar(45),
+@addr_street varchar(30),
+@addr_city varchar(30),
+@addr_state varchar(2),
+@addr_zip varchar(5), 
+@fname varchar(20),
+@lname varchar(30), 
+@age int, 
+@Transferred char, 
+@VIN varchar(17), --could be null
+@date date,
+@notes varchar(1000), --(nullable)
+@newCallId int output
+			 */
 			cStatement.setString(1, branchName);
-			cStatement.setDate(2, java.sql.Date.valueOf(callreceived));
-			cStatement.setString(3, streetaddress);
+			cStatement.setString(2, streetaddress);
+			cStatement.setString(3, city);
 			cStatement.setString(4, state);
-			cStatement.setString(5, city);
-			cStatement.setString(6, zip);
-			cStatement.setString(7, fname);
-			cStatement.setString(8, lname);
-			cStatement.setInt(9, age);
-			cStatement.setString(10, "" + choice);
-			cStatement.setInt(11, vin2);
+			cStatement.setString(5, zip);
+			cStatement.setString(6, fname);
+			cStatement.setString(7, lname);
+			cStatement.setInt(8, age);
+			cStatement.setString(9, "" + choice);
+			cStatement.setString(10, null);
+			cStatement.setDate(11, java.sql.Date.valueOf(callreceived.toString()));
 			cStatement.setString(12, null);
-			cStatement.execute();
+			//cStatement.setInt(13, id);
+			ResultSet rs = cStatement.executeQuery();
+			
+			//cStatement.execute();
 			System.out.println(cStatement.getUpdateCount());
 			//cStatement.getMoreResults();
 			System.out.println("all is well about to commit");
 
 			dbConnection.commit();
+			
+			
+			
+			System.out.println("INSIDE THIS METHOD THE ID IS: "+id);
+			if(rs.next()) {
+			    System.out.println("Equipment ID: " + rs.getString("newCallId"));
+			}
+			
 			System.out.println("committed the transaction");
 		} catch (SQLException sqlE) {
 			System.out.println("problem occurred " + sqlE.getMessage());
