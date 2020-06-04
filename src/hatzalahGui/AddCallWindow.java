@@ -99,14 +99,15 @@ public class AddCallWindow extends Stage {
 		VIN.setVisible(false);
 		grid.add(VIN, 3, 1);
 
-		borderLayout.setCenter(grid);
+		Label alertLabel = new Label("You need to fill in all fields");
+		alertLabel.setVisible(false);
 		Button okButton = new Button("OK");
 		okButton.setStyle("-fx-background-color: Lavender");
 		okButton.setOnAction(e -> {
-			System.out.println(branchName.getText().isBlank());
 			if (!(branchName.getText().isBlank() || streetAddress.getText().isBlank() || city.getText().isBlank()
 					|| state.getText().isBlank() || zip.getText().isBlank() || fname.getText().isBlank()
 					|| lname.getText().isBlank() || age.getText().isBlank())) {
+				alertLabel.setVisible(true);
 				try {
 					addCallData(branchName.getText(), dateOfCall.getValue(), streetAddress.getText(), city.getText(),
 							state.getText(), zip.getText(), fname.getText(), lname.getText(),
@@ -121,14 +122,16 @@ public class AddCallWindow extends Stage {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+			}else {
+				alertLabel.setVisible(true);
 			}
 		});
-
+		borderLayout.setCenter(grid);
 		Button backButton = new Button("Back");
 		backButton.setStyle("-fx-background-color: Lavender");
 		backButton.setOnAction(e -> this.close());
 		HBox hbox = new HBox();
-		hbox.getChildren().addAll(okButton, backButton);
+		hbox.getChildren().addAll(okButton, backButton, alertLabel);
 		HBox.setMargin(okButton, new Insets(2, 2, 2, 2));
 		HBox.setMargin(backButton, new Insets(2, 2, 2, 2));
 
