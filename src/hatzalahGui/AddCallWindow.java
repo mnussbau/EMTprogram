@@ -15,6 +15,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -27,7 +28,7 @@ public class AddCallWindow extends Stage {
 	TextField branchName;
 	DatePicker dateOfCall;
 	TextField streetAddress;
-	TextField state;
+	ComboBox<String> state;
 	TextField city;
 	TextField zip;
 	TextField fname;
@@ -35,9 +36,13 @@ public class AddCallWindow extends Stage {
 	TextField age;
 	ComboBox<Character> choice;
 	TextField VIN;
+	TextArea notes;
+	Scene mainScene;
 
-	public AddCallWindow() { // you would pass it the mainWindow from main if you want it to be in the same
+	public AddCallWindow(Stage mainWindow) { // you would pass it the mainWindow from main if you want it to be in the same
 								// Stage
+		
+		mainScene = mainWindow.getScene();
 		Label vinLabel = new Label("VIN:");
 		vinLabel.setVisible(false);
 		Character yesNo[] = { 'Y', 'N' };
@@ -79,7 +84,14 @@ public class AddCallWindow extends Stage {
 		city = new TextField();
 		grid.add(city, 1, 5);
 		grid.add(new Label("State:"), 2, 4);
-		state = new TextField();
+		String[] listOfStates = {"AL","AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", 
+				"KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC",
+				"ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY" };
+		
+		state = new ComboBox<String>(FXCollections.observableArrayList(listOfStates));
+		state.resize(150, 150);
+		state.setStyle("-fx-background-color: Lavender");
+		state.setValue("NY");
 		grid.add(state, 2, 5);
 		grid.add(new Label("Zip:"), 3, 4);
 		zip = new TextField();
@@ -99,6 +111,10 @@ public class AddCallWindow extends Stage {
 		VIN = new TextField();
 		VIN.setVisible(false);
 		grid.add(VIN, 3, 1);
+		grid.add(new Label("Notes:"), 0, 6);
+		notes = new TextArea();
+		
+//		grid.add(notes, 0, 6);
 
 		Label alertLabel = new Label("You need to fill in all fields");
 		alertLabel.setVisible(false);
@@ -106,41 +122,44 @@ public class AddCallWindow extends Stage {
 		okButton.setStyle("-fx-background-color: Lavender");
 		okButton.setOnAction(e -> {
 			if (!(branchName.getText().isBlank() || streetAddress.getText().isBlank() || city.getText().isBlank()
-					|| state.getText().isBlank() || zip.getText().isBlank() || fname.getText().isBlank()
-					|| lname.getText().isBlank() || age.getText().isBlank())) {
+					|| zip.getText().isBlank() || fname.getText().isBlank()
+					|| lname.getText().isBlank() || age.getText().isBlank()) || (VIN.isVisible() && VIN.getText().isBlank())) {
 				alertLabel.setVisible(true);
-				try {
-					addCallData(branchName.getText(), dateOfCall.getValue(), streetAddress.getText(), city.getText(),
-							state.getText(), zip.getText(), fname.getText(), lname.getText(),
-							Integer.parseInt(age.getText()), choice.getValue(), VIN.getText());
-				} catch (NumberFormatException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				new AddSymptomsToCall(branchName.getText(), streetAddress.getText(), city, state.getValue(), zip.getText(), 
+						fname.getText(), lname.getText(), age.getText(), VIN.getText(), notes.getText(), mainWindow);
+//				try {
+//					addCallData(branchName.getText(), dateOfCall.getValue(), streetAddress.getText(), city.getText(),
+//							state.getText(), zip.getText(), fname.getText(), lname.getText(),
+//							Integer.parseInt(age.getText()), choice.getValue(), VIN.getText());
+//				} catch (NumberFormatException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				} catch (SQLException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				} catch (Exception e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
 			}else {
 				alertLabel.setVisible(true);
 			}
 		});
-		borderLayout.setCenter(grid);
+		borderLayout.setTop(grid);
 		Button backButton = new Button("Back");
 		backButton.setStyle("-fx-background-color: Lavender");
-		backButton.setOnAction(e -> this.close());
+		backButton.setOnAction(e -> mainWindow.setScene(mainScene));
 		HBox hbox = new HBox();
 		hbox.getChildren().addAll(okButton, backButton, alertLabel);
 		HBox.setMargin(okButton, new Insets(2, 2, 2, 2));
 		HBox.setMargin(backButton, new Insets(2, 2, 2, 2));
-
+		borderLayout.setCenter(new HBox(notes));
 		borderLayout.setBottom(hbox);
 		Scene scene = new Scene(borderLayout);
-		this.setScene(scene);
-		this.initModality(Modality.APPLICATION_MODAL);
-		this.show();
+		mainWindow.setScene(scene);
+		mainWindow.sizeToScene();
+//		this.initModality(Modality.APPLICATION_MODAL);
+//		this.show();
 	}
 
 	public static void addCallData(String branchName, LocalDate callreceived, String streetaddress, String city,
