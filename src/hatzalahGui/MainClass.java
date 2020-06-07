@@ -1,6 +1,11 @@
 package hatzalahGui;
 
+import java.awt.List;
 import java.io.FileInputStream;
+import java.util.ArrayList;
+
+import hatzalahBusiness.Branch;
+import hatzalahData.BranchData;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -39,7 +44,7 @@ public class MainClass extends Application {
 		});
 		MenuItem addCallMenuItem = new MenuItem("Call");
 		addCallMenuItem.setOnAction(e -> {
-			new AddCallWindow();
+			new AddCallWindow(mainWindow);
 		});
 		MenuItem addCredentialsMenuItem = new MenuItem("Credential");
 		addCredentialsMenuItem.setOnAction(e -> {
@@ -86,6 +91,17 @@ public class MainClass extends Application {
 			new UpdateMemberWindow();
 		});
 		updateMenu.getItems().addAll(updateBusInfoMenuItem, updateDonorInfoMenuItem, memberInfoMenuItem);
+		
+		ArrayList<Branch> branches = BranchData.getBranch();
+		for(int i = 0; i < branches.size(); i++) {
+			int x = i;
+			MenuItem branchItem = new MenuItem(branches.get(i).getBranchName());
+			branchItem.setOnAction(e ->{
+				new ViewBranchWindow(branches.get(x), mainWindow);
+				
+			});
+			viewMenu.getItems().add(branchItem);
+		}
 
 		MenuBar theMenuBar = new MenuBar();
 		theMenuBar.setStyle("-fx-background-color: Lavender");
@@ -96,8 +112,9 @@ public class MainClass extends Application {
 		imageView.setImage(image1);
 		mainWindow.getIcons().add(image1);
 		pane.setCenter(imageView);
-		Scene theScene = new Scene(pane, 500, 500);
+		Scene theScene = new Scene(pane, 600, 500);
 		mainWindow.setScene(theScene);
+		mainWindow.sizeToScene();
 		mainWindow.show();
 
 	}
