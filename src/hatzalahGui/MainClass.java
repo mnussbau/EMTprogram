@@ -56,7 +56,7 @@ public class MainClass extends Application {
 		});
 		MenuItem addDonationMenuItem = new MenuItem("Donation");
 		addDonationMenuItem.setOnAction(e -> {
-			new AddDonationWindow();
+			new AddDonationWindow(mainWindow, dbconnection);
 		});
 		MenuItem addDonorMenuItem = new MenuItem("Donor");
 		addDonorMenuItem.setOnAction(e -> {
