@@ -72,7 +72,7 @@ public class MainClass extends Application {
 		});
 		MenuItem addPurchaseEquipmentMenuItem = new MenuItem("Purchase Equipment");
 		addPurchaseEquipmentMenuItem.setOnAction(e -> {
-			new AddPurchaseWindow();
+			new AddPurchaseWindow(mainWindow, dbconnection);
 		});
 		MenuItem addSymptomMenuItem = new MenuItem("Symptom");
 		addSymptomMenuItem.setOnAction(e -> {
