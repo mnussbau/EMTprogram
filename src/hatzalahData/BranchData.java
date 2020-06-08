@@ -17,8 +17,6 @@ public class BranchData {
 				Connection dbConnection = DriverManager.getConnection(url);
 				Statement statement = dbConnection.createStatement();
 				ResultSet rs = statement.executeQuery("select * from branch");
-				System.out.println(rs.findColumn("branch_name"));
-				System.out.println("executed the statement");
 				
 				while (rs.next()) {
 					Branch branch = new Branch(rs.getInt("branch_id"), rs.getString("branch_name"), rs.getInt("year_est"));
