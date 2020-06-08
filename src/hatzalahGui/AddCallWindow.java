@@ -113,8 +113,9 @@ public class AddCallWindow extends Stage {
 		symptomsView.setMaxHeight(50);
 		symptomsView.setMaxWidth(150);
 		Button addSymptomBtn = new Button("Add Symptom");
+//		addSymptomBtn.setStyle("-fx-border-color: black; -fx-border-width: 0 3 3 0;");
 		addSymptomBtn.setOnAction(new addSymptomToCall_click(db));
-		addSymptomBtn.setStyle("-fx-background-color: Lavender");
+		addSymptomBtn.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
 		grid.add(new Label("Symptoms"), 0, 6);
 		grid.add(symptomsView, 0, 7);
 		grid.add(addSymptomBtn, 0, 8);
@@ -124,7 +125,7 @@ public class AddCallWindow extends Stage {
 		membersView.setMaxWidth(174);
 		Button addMemberBtn = new Button("Add Member");
 		addMemberBtn.setOnAction(new AddMemberToCall_click(db));
-		addMemberBtn.setStyle("-fx-background-color: Lavender");
+		addMemberBtn.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
 		grid.add(new Label("Members"), 1, 6);
 		grid.add(membersView, 1, 7);
 		grid.add(addMemberBtn, 1, 8);
@@ -134,7 +135,7 @@ public class AddCallWindow extends Stage {
 		equipmentView.setMaxWidth(150);
 		Button addEquipBtn = new Button("Add Equipment");
 		addEquipBtn.setOnAction(new AddEquipToCall_click(db));
-		addEquipBtn.setStyle("-fx-background-color: Lavender");
+		addEquipBtn.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
 		grid.add(new Label("Equipment"), 2, 6);
 		grid.add(equipmentView, 2, 7);
 		grid.add(addEquipBtn, 2, 8);
@@ -145,11 +146,11 @@ public class AddCallWindow extends Stage {
 		Label alertLabel = new Label("You need to fill in all fields");
 		alertLabel.setVisible(false);
 		Button okButton = new Button("OK");
-		okButton.setStyle("-fx-background-color: Lavender");
+		okButton.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
 		okButton.setOnAction(new addCallData());
 		borderLayout.setTop(grid);
 		Button backButton = new Button("Back");
-		backButton.setStyle("-fx-background-color: Lavender");
+		backButton.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
 		backButton.setOnAction(e -> mainWindow.setScene(mainScene));
 		HBox hbox = new HBox();
 		hbox.getChildren().addAll(okButton, backButton, alertLabel);
