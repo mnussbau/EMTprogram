@@ -1,7 +1,8 @@
 package hatzalahGui;
 
-import java.awt.List;
 import java.io.FileInputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 
 import hatzalahBusiness.Branch;
@@ -17,6 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class MainClass extends Application {
+	private Connection dbconnection;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -24,12 +26,14 @@ public class MainClass extends Application {
 
 	@Override
 	public void start(Stage mainWindow) throws Exception {
+		String url = "jdbc:sqlserver://localhost:1433;instance=SQLEXPRESS01;databaseName=Hatzolah;integratedSecurity=true";
+		dbconnection = DriverManager.getConnection(url);
 		mainWindow.setHeight(500);
 		mainWindow.setWidth(600);
 		mainWindow.setTitle("Hatzolah");
 		BorderPane pane = new BorderPane();
 		pane.setStyle("-fx-background-color: Azure");
-		
+
 		Menu addMenu = new Menu("Add");
 		Menu updateMenu = new Menu("Update");
 		Menu viewMenu = new Menu("View");
@@ -44,7 +48,7 @@ public class MainClass extends Application {
 		});
 		MenuItem addCallMenuItem = new MenuItem("Call");
 		addCallMenuItem.setOnAction(e -> {
-			new AddCallWindow(mainWindow);
+			new AddCallWindow(mainWindow,dbconnection);
 		});
 		MenuItem addCredentialsMenuItem = new MenuItem("Credential");
 		addCredentialsMenuItem.setOnAction(e -> {
@@ -72,12 +76,12 @@ public class MainClass extends Application {
 		});
 		MenuItem addSymptomMenuItem = new MenuItem("Symptom");
 		addSymptomMenuItem.setOnAction(e -> {
-			new AddSymptomWindow();
+			new AddSymptomWindow(mainWindow,dbconnection);
 		});
 		addMenu.getItems().addAll(addBranchMenuItem, addBusMenuItem, addCallMenuItem, addCredentialsMenuItem,
 				addDonationMenuItem, addDonorMenuItem, addJobTitleMenuItem, addMemberMenuItem,
 				addPurchaseEquipmentMenuItem, addSymptomMenuItem);
-		
+
 		MenuItem updateBusInfoMenuItem = new MenuItem("Bus Info");
 		updateBusInfoMenuItem.setOnAction(e -> {
 			new UpdateBusWindow();
@@ -91,14 +95,14 @@ public class MainClass extends Application {
 			new UpdateMemberWindow();
 		});
 		updateMenu.getItems().addAll(updateBusInfoMenuItem, updateDonorInfoMenuItem, memberInfoMenuItem);
-		
+
 		ArrayList<Branch> branches = BranchData.getBranch();
-		for(int i = 0; i < branches.size(); i++) {
+		for (int i = 0; i < branches.size(); i++) {
 			int x = i;
 			MenuItem branchItem = new MenuItem(branches.get(i).getBranchName());
-			branchItem.setOnAction(e ->{
+			branchItem.setOnAction(e -> {
 				new ViewBranchWindow(branches.get(x), mainWindow);
-				
+
 			});
 			viewMenu.getItems().add(branchItem);
 		}

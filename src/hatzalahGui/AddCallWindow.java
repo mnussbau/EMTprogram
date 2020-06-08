@@ -1,30 +1,21 @@
 package hatzalahGui;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDate;
+import java.sql.*;
+import java.util.*;
+
+import java.time.*;
 
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DateCell;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
 import javafx.util.Callback;
 
 public class AddCallWindow extends Stage {
+	Connection dbConnection;
 	TextField branchName;
 	DatePicker dateOfCall;
 	TextField streetAddress;
@@ -34,22 +25,21 @@ public class AddCallWindow extends Stage {
 	TextField fname;
 	TextField lname;
 	TextField age;
-	ComboBox<Character> choice;
+	ComboBox<Character> transferedCmboBx;
 	TextField VIN;
 	TextArea notes;
 	Scene mainScene;
 
-	public AddCallWindow(Stage mainWindow) { // you would pass it the mainWindow from main if you want it to be in the same
-								// Stage
-		
+	public AddCallWindow(Stage mainWindow, Connection db) { 
 		mainScene = mainWindow.getScene();
+		dbConnection = db;
 		Label vinLabel = new Label("VIN:");
 		vinLabel.setVisible(false);
 		Character yesNo[] = { 'Y', 'N' };
-		choice = new ComboBox<Character>(FXCollections.observableArrayList(yesNo));
-		choice.setStyle("-fx-background-color: Lavender");
-		choice.setOnAction(e -> {
-			if (choice.getValue() == 'Y') {
+		transferedCmboBx = new ComboBox<Character>(FXCollections.observableArrayList(yesNo));
+		transferedCmboBx.setStyle("-fx-background-color: Lavender");
+		transferedCmboBx.setOnAction(e -> {
+			if (transferedCmboBx.getValue() == 'Y') {
 				VIN.setVisible(true);
 				vinLabel.setVisible(true);
 			} else {
@@ -57,7 +47,7 @@ public class AddCallWindow extends Stage {
 				vinLabel.setVisible(false);
 			}
 		});
-		choice.setValue('N');
+		transferedCmboBx.setValue('N');
 
 		BorderPane borderLayout = new BorderPane();
 		borderLayout.setStyle("-fx-background-color: Azure");
@@ -87,7 +77,6 @@ public class AddCallWindow extends Stage {
 		String[] listOfStates = {"AL","AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", 
 				"KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC",
 				"ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY" };
-		
 		state = new ComboBox<String>(FXCollections.observableArrayList(listOfStates));
 		state.resize(150, 150);
 		state.setStyle("-fx-background-color: Lavender");
@@ -106,16 +95,29 @@ public class AddCallWindow extends Stage {
 		age = new TextField();
 		grid.add(age, 2, 3);
 		grid.add(new Label("Transferred?"), 2, 0);
-		grid.add(choice, 2, 1);
+		grid.add(transferedCmboBx, 2, 1);
 		grid.add(vinLabel, 3, 0);
 		VIN = new TextField();
 		VIN.setVisible(false);
 		grid.add(VIN, 3, 1);
 		grid.add(new Label("Notes:"), 0, 6);
+		
+		
+		Statement statement = dbConnection.createStatement();
+		ResultSet rs = statement.executeQuery("select symptom_desc from branch");
+		while(rs.next()) {
+			symtoms.add(rs.getString("symtom_desc"));
+		}
+		List<String> symptoms = new ArrayList<>();
+		ListView<String> symptomsView = new ListView<>(FXCollections.observableArrayList(symptoms));
+		Button addSymptomBtn = new Button("Add Symptom");
+		addSymptomBtn.setStyle("-fx-background-color: Lavender");
+		
+		
+		
 		notes = new TextArea();
 		
-//		grid.add(notes, 0, 6);
-
+		
 		Label alertLabel = new Label("You need to fill in all fields");
 		alertLabel.setVisible(false);
 		Button okButton = new Button("OK");
@@ -182,35 +184,6 @@ public class AddCallWindow extends Stage {
 
 			String sql = "{call usp_addCall(?,?,?,?,?,?,?,?,?,?,?,?)}";
 			cStatement = dbConnection.prepareCall(sql);
-
-			// set up the parameters to the procedure
-			/*
-			 * @branchName varchar(45),
-			 * 
-			 * @addr_street varchar(30),
-			 * 
-			 * @addr_city varchar(30),
-			 * 
-			 * @addr_state varchar(2),
-			 * 
-			 * @addr_zip varchar(5),
-			 * 
-			 * @fname varchar(20),
-			 * 
-			 * @lname varchar(30),
-			 * 
-			 * @age int,
-			 * 
-			 * @Transferred char,
-			 * 
-			 * @VIN varchar(17), --could be null
-			 * 
-			 * @date date,
-			 * 
-			 * @notes varchar(1000), --(nullable)
-			 * 
-			 * @newCallId int output
-			 */
 			cStatement.setString(1, branchName);
 			cStatement.setString(2, streetaddress);
 			cStatement.setString(3, city);
@@ -223,7 +196,6 @@ public class AddCallWindow extends Stage {
 			cStatement.setString(10, null);
 			cStatement.setDate(11, java.sql.Date.valueOf(callreceived.toString()));
 			cStatement.setString(12, null);
-			// cStatement.setInt(13, id);
 			ResultSet rs = cStatement.executeQuery();
 
 			// cStatement.execute();
@@ -245,6 +217,12 @@ public class AddCallWindow extends Stage {
 
 		}
 
+	}
+	
+	class addSymptomToCall_click implements EventHandler<ActionEvent> {
+		
+		
+		
 	}
 
 }
