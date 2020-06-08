@@ -111,6 +111,7 @@ public class AddCallWindow extends Stage {
 
 		symptomsView = new ListView<>();
 		symptomsView.setMaxHeight(50);
+		symptomsView.setMaxWidth(150);
 		Button addSymptomBtn = new Button("Add Symptom");
 		addSymptomBtn.setOnAction(new addSymptomToCall_click(db));
 		addSymptomBtn.setStyle("-fx-background-color: Lavender");
@@ -120,6 +121,7 @@ public class AddCallWindow extends Stage {
 
 		membersView = new ListView<>();
 		membersView.setMaxHeight(50);
+		membersView.setMaxWidth(174);
 		Button addMemberBtn = new Button("Add Member");
 		addMemberBtn.setOnAction(new AddMemberToCall_click(db));
 		addMemberBtn.setStyle("-fx-background-color: Lavender");
@@ -129,6 +131,7 @@ public class AddCallWindow extends Stage {
 
 		equipmentView = new ListView<>();
 		equipmentView.setMaxHeight(50);
+		equipmentView.setMaxWidth(150);
 		Button addEquipBtn = new Button("Add Equipment");
 		addEquipBtn.setOnAction(new AddEquipToCall_click(db));
 		addEquipBtn.setStyle("-fx-background-color: Lavender");
