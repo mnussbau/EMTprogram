@@ -3,9 +3,12 @@ package hatzalahGui;
 import java.sql.*;
 import java.util.*;
 
+import javax.swing.JOptionPane;
+
 import java.time.*;
 
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -29,8 +32,11 @@ public class AddCallWindow extends Stage {
 	TextField VIN;
 	TextArea notes;
 	Scene mainScene;
+	ListView<String> symptomsView;
+	ListView<String> membersView;
+	ListView<String> equipmentView;
 
-	public AddCallWindow(Stage mainWindow, Connection db) { 
+	public AddCallWindow(Stage mainWindow, Connection db) {
 		mainScene = mainWindow.getScene();
 		dbConnection = db;
 		Label vinLabel = new Label("VIN:");
@@ -74,9 +80,10 @@ public class AddCallWindow extends Stage {
 		city = new TextField();
 		grid.add(city, 1, 5);
 		grid.add(new Label("State:"), 2, 4);
-		String[] listOfStates = {"AL","AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", 
-				"KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC",
-				"ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY" };
+		String[] listOfStates = { "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN",
+				"IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM",
+				"NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV",
+				"WI", "WY" };
 		state = new ComboBox<String>(FXCollections.observableArrayList(listOfStates));
 		state.resize(150, 150);
 		state.setStyle("-fx-background-color: Lavender");
@@ -100,53 +107,39 @@ public class AddCallWindow extends Stage {
 		VIN = new TextField();
 		VIN.setVisible(false);
 		grid.add(VIN, 3, 1);
-		grid.add(new Label("Notes:"), 0, 6);
-		
-		
-		Statement statement = dbConnection.createStatement();
-		ResultSet rs = statement.executeQuery("select symptom_desc from branch");
-		while(rs.next()) {
-			symtoms.add(rs.getString("symtom_desc"));
-		}
-		List<String> symptoms = new ArrayList<>();
-		ListView<String> symptomsView = new ListView<>(FXCollections.observableArrayList(symptoms));
+		grid.add(new Label("Notes:"), 0, 10);
+
+		symptomsView = new ListView<>();
 		Button addSymptomBtn = new Button("Add Symptom");
+		addSymptomBtn.setOnAction(new addSymptomToCall_click(db));
 		addSymptomBtn.setStyle("-fx-background-color: Lavender");
-		
-		
-		
+		grid.add(new Label("Symptoms"), 0, 6);
+		grid.add(symptomsView, 0, 7);
+		grid.add(addSymptomBtn, 0, 8);
+
+		membersView = new ListView<>();
+		Button addMemberBtn = new Button("Add Member");
+		addMemberBtn.setOnAction(new AddMemberToCall_click(db));
+		addMemberBtn.setStyle("-fx-background-color: Lavender");
+		grid.add(new Label("Members"), 1, 6);
+		grid.add(membersView, 1, 7);
+		grid.add(addMemberBtn, 1, 8);
+
+		equipmentView = new ListView<>();
+		Button addEquipBtn = new Button("Add Equipment");
+		addEquipBtn.setOnAction(new AddEquipToCall_click(db));
+		addEquipBtn.setStyle("-fx-background-color: Lavender");
+		grid.add(new Label("Equipment"), 2, 6);
+		grid.add(equipmentView, 2, 7);
+		grid.add(addEquipBtn, 2, 8);
+
 		notes = new TextArea();
-		
-		
+
 		Label alertLabel = new Label("You need to fill in all fields");
 		alertLabel.setVisible(false);
 		Button okButton = new Button("OK");
 		okButton.setStyle("-fx-background-color: Lavender");
-		okButton.setOnAction(e -> {
-			if (!(branchName.getText().isBlank() || streetAddress.getText().isBlank() || city.getText().isBlank()
-					|| zip.getText().isBlank() || fname.getText().isBlank()
-					|| lname.getText().isBlank() || age.getText().isBlank()) || (VIN.isVisible() && VIN.getText().isBlank())) {
-				alertLabel.setVisible(true);
-				new AddSymptomsToCall(branchName.getText(), streetAddress.getText(), city, state.getValue(), zip.getText(), 
-						fname.getText(), lname.getText(), age.getText(), VIN.getText(), notes.getText(), mainWindow);
-//				try {
-//					addCallData(branchName.getText(), dateOfCall.getValue(), streetAddress.getText(), city.getText(),
-//							state.getText(), zip.getText(), fname.getText(), lname.getText(),
-//							Integer.parseInt(age.getText()), choice.getValue(), VIN.getText());
-//				} catch (NumberFormatException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				} catch (SQLException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				} catch (Exception e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
-			}else {
-				alertLabel.setVisible(true);
-			}
-		});
+		okButton.setOnAction(new addCallData());
 		borderLayout.setTop(grid);
 		Button backButton = new Button("Back");
 		backButton.setStyle("-fx-background-color: Lavender");
@@ -164,65 +157,192 @@ public class AddCallWindow extends Stage {
 //		this.show();
 	}
 
-	public static void addCallData(String branchName, LocalDate callreceived, String streetaddress, String city,
-			String state, String zip, String fname, String lname, Integer age, Character choice, String vin2)
-			throws SQLException, Exception {
-		String url = "jdbc:sqlserver://localhost:1433;instance=SQLEXPRESS01;databaseName=Hatzolah;integratedSecurity=true";
-		Connection dbConnection = DriverManager.getConnection(url);
+	class addCallData implements EventHandler<ActionEvent> {
+		String branchName;
+		LocalDate callreceived;
+		String streetaddress;
+		String city;
+		String state;
+		String zip;
+		String fname;
+		String lname;
+		Integer age;
+		Character choice;
+		String vin2;
+		Connection dbConnection;
 
-		// branchname
-		// callreceived date
-		// address - whhole address state city zip street
-		// fname, lastname, age,
-		// transferred Y or no
-		// vin
-		// notes
+		@Override
+		public void handle(ActionEvent event) {
+			// (String branchName, LocalDate callreceived, String streetaddress, String
+			// city,
+			// String state, String zip, String fname, String lname, Integer age, Character
+			// choice, String vin2)
+			// throws SQLException, Exception {
 
-		try {
-			dbConnection.setAutoCommit(false);
-			CallableStatement cStatement;
+			// branchname
+			// callreceived date
+			// address - whhole address state city zip street
+			// fname, lastname, age,
+			// transferred Y or no
+			// vin
+			// notes
 
-			String sql = "{call usp_addCall(?,?,?,?,?,?,?,?,?,?,?,?)}";
-			cStatement = dbConnection.prepareCall(sql);
-			cStatement.setString(1, branchName);
-			cStatement.setString(2, streetaddress);
-			cStatement.setString(3, city);
-			cStatement.setString(4, state);
-			cStatement.setString(5, zip);
-			cStatement.setString(6, fname);
-			cStatement.setString(7, lname);
-			cStatement.setInt(8, age);
-			cStatement.setString(9, "" + choice);
-			cStatement.setString(10, null);
-			cStatement.setDate(11, java.sql.Date.valueOf(callreceived.toString()));
-			cStatement.setString(12, null);
-			ResultSet rs = cStatement.executeQuery();
+			try {
+				dbConnection.setAutoCommit(false);
+				CallableStatement cStatement;
 
-			// cStatement.execute();
-			System.out.println(cStatement.getUpdateCount());
-			// cStatement.getMoreResults();
-			System.out.println("all is well about to commit");
+				String sql = "{call usp_addCall(?,?,?,?,?,?,?,?,?,?,?,?)}";
+				cStatement = dbConnection.prepareCall(sql);
+				cStatement.setString(1, branchName);
+				cStatement.setString(2, streetaddress);
+				cStatement.setString(3, city);
+				cStatement.setString(4, state);
+				cStatement.setString(5, zip);
+				cStatement.setString(6, fname);
+				cStatement.setString(7, lname);
+				cStatement.setInt(8, age);
+				cStatement.setString(9, "" + choice);
+				cStatement.setString(10, null);
+				cStatement.setDate(11, java.sql.Date.valueOf(callreceived.toString()));
+				cStatement.setString(12, null);
+				ResultSet rs = cStatement.executeQuery();
 
-			dbConnection.commit();
+				// cStatement.execute();
+				System.out.println(cStatement.getUpdateCount());
+				// cStatement.getMoreResults();
+				System.out.println("all is well about to commit");
 
-			if (rs.next()) {
-				System.out.println("Equipment ID: " + rs.getString("newCallId"));
+				dbConnection.commit();
+
+				if (rs.next()) {
+					System.out.println("Equipment ID: " + rs.getString("newCallId"));
+				}
+
+				System.out.println("committed the transaction");
+			} catch (SQLException sqlE) {
+				System.out.println("problem occurred " + sqlE.getMessage());
+				// dbConnection.rollback();
+
 			}
-
-			System.out.println("committed the transaction");
-		} catch (SQLException sqlE) {
-			System.out.println("problem occurred " + sqlE.getMessage());
-			dbConnection.rollback();
-			throw sqlE;
-
 		}
 
 	}
-	
+
 	class addSymptomToCall_click implements EventHandler<ActionEvent> {
-		
-		
-		
+		Connection db;
+		List<String> currentSymptoms;
+
+		public addSymptomToCall_click(Connection db) {
+			this.db = db;
+			this.currentSymptoms = symptomsView.getItems();
+		}
+
+		@Override
+		public void handle(ActionEvent arg0) {
+			List<String> allSymptoms = new ArrayList<>();
+			try {
+				Statement statement = dbConnection.createStatement();
+				ResultSet rs = statement.executeQuery("select Symptom_desc from SYMPTOM");
+				while (rs.next()) {
+					allSymptoms.add(rs.getString("Symptom_desc"));
+				}
+			} catch (SQLException ex) {
+				JOptionPane.showMessageDialog(null, "Something went wrong." + ex.getMessage());
+				return;
+			}
+
+			currentSymptoms.forEach(s -> allSymptoms.remove(s));
+			String s = (String) JOptionPane.showInputDialog(null, "please choose a symptom.", "Choose a symptom",
+					JOptionPane.PLAIN_MESSAGE, null, allSymptoms.toArray(), "");
+			if ((s != null) && (s.length() > 0)) {
+				symptomsView.getItems().add(s);
+				return;
+			}
+		}
+
 	}
 
+	class AddMemberToCall_click implements EventHandler<ActionEvent> {
+		Connection db;
+		List<String> currentMembers;
+
+		public AddMemberToCall_click(Connection db) {
+			this.db = db;
+			this.currentMembers = membersView.getItems();
+		}
+
+		@Override
+		public void handle(ActionEvent arg0) {
+			List<String> allMembers = new ArrayList<>();
+			int branchId;
+			try {
+				branchName.setDisable(true);
+				CallableStatement stmt = db.prepareCall("select branch_id from branch where branch_name = ?;");
+				stmt.setString(1, branchName.getText());
+				ResultSet set = stmt.executeQuery();
+				if (set.next()) {
+					branchId = set.getInt("branch_id");
+				} else {
+					branchName.setDisable(false);
+					JOptionPane.showMessageDialog(null,
+							"Branch name not valid. Please input valid branch name to add a member");
+					return;
+				}
+
+				Statement statement = dbConnection.createStatement();
+				ResultSet rs = statement
+						.executeQuery("select member_id+': '+fname+' '+lname as member from MEMBER where branch_id = "
+								+ branchId + ";");
+
+				while (rs.next()) {
+					allMembers.add(rs.getString("member"));
+				}
+			} catch (SQLException ex) {
+				JOptionPane.showMessageDialog(null, "Something went wrong." + ex.getMessage());
+				System.out.println(ex.getStackTrace().toString());
+				return;
+			}
+
+			currentMembers.forEach(m -> allMembers.remove(m));
+			String s = (String) JOptionPane.showInputDialog(null, "please choose a member.", "Choose a member",
+					JOptionPane.PLAIN_MESSAGE, null, allMembers.toArray(), "");
+			if ((s != null) && (s.length() > 0)) {
+				membersView.getItems().add(s);
+				return;
+			}
+		}
+	}
+
+	class AddEquipToCall_click implements EventHandler<ActionEvent> {
+		Connection db;
+		List<String> currentEquipment;
+
+		public AddEquipToCall_click(Connection db) {
+			this.db = db;
+			this.currentEquipment = equipmentView.getItems();
+		}
+
+		@Override
+		public void handle(ActionEvent arg0) {
+			List<String> allEquipment = new ArrayList<>();
+			try {
+				Statement statement = dbConnection.createStatement();
+				ResultSet rs = statement.executeQuery("select Equip_desc from EQUIPMENT;");
+				while (rs.next()) {
+					allEquipment.add(rs.getString("Equip_desc"));
+				}
+			} catch (SQLException ex) {
+				JOptionPane.showMessageDialog(null, "Something went wrong." + ex.getMessage());
+				System.out.println(ex.getStackTrace().toString());
+				return;
+			}
+			currentEquipment.forEach(m -> allEquipment.remove(m));
+			String s = (String) JOptionPane.showInputDialog(null, "please choose an equipment.", "Choose an equipment",
+					JOptionPane.PLAIN_MESSAGE, null, currentEquipment.toArray(), "");
+			if ((s != null) && (s.length() > 0)) {
+				equipmentView.getItems().add(s);
+				return;
+			}
+		}
+	}
 }
