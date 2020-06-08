@@ -110,6 +110,7 @@ public class AddCallWindow extends Stage {
 		grid.add(new Label("Notes:"), 0, 10);
 
 		symptomsView = new ListView<>();
+		symptomsView.setMaxHeight(50);
 		Button addSymptomBtn = new Button("Add Symptom");
 		addSymptomBtn.setOnAction(new addSymptomToCall_click(db));
 		addSymptomBtn.setStyle("-fx-background-color: Lavender");
@@ -118,6 +119,7 @@ public class AddCallWindow extends Stage {
 		grid.add(addSymptomBtn, 0, 8);
 
 		membersView = new ListView<>();
+		membersView.setMaxHeight(50);
 		Button addMemberBtn = new Button("Add Member");
 		addMemberBtn.setOnAction(new AddMemberToCall_click(db));
 		addMemberBtn.setStyle("-fx-background-color: Lavender");
@@ -126,6 +128,7 @@ public class AddCallWindow extends Stage {
 		grid.add(addMemberBtn, 1, 8);
 
 		equipmentView = new ListView<>();
+		equipmentView.setMaxHeight(50);
 		Button addEquipBtn = new Button("Add Equipment");
 		addEquipBtn.setOnAction(new AddEquipToCall_click(db));
 		addEquipBtn.setStyle("-fx-background-color: Lavender");
@@ -134,6 +137,7 @@ public class AddCallWindow extends Stage {
 		grid.add(addEquipBtn, 2, 8);
 
 		notes = new TextArea();
+		notes.setMaxHeight(100);
 
 		Label alertLabel = new Label("You need to fill in all fields");
 		alertLabel.setVisible(false);
