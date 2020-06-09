@@ -1,13 +1,15 @@
 package hatzalahGui;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
-import javafx.collections.FXCollections;
+import javax.swing.JOptionPane;
+
+import hatzalahData.DonationIO;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -18,14 +20,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public class AddDonationWindow {
-	/*
-	 * Donor phone number 
-	 * Amt 
-	 * Date 
-	 * Branch name
-	 */
-	private TextField fname;
-	private TextField lname;
 	private TextField donorPhoneNum;
 	private TextField amount;
 	private DatePicker date;
@@ -36,20 +30,13 @@ public class AddDonationWindow {
 		mainScene = mainWindow.getScene();
 		BorderPane layout = new BorderPane();
 		GridPane grid = new GridPane();
-		grid.autosize();
-		grid.add(new Label("First Name"), 0, 0);
-		fname = new TextField();
-		grid.add(fname, 0, 1);
-		grid.add(new Label("Last Name"), 1, 0);
-		lname = new TextField();
-		grid.add(lname, 1, 1);
-		grid.add(new Label("Phone Number"), 2, 0);
+		grid.add(new Label("Phone Number"), 0, 0);
 		donorPhoneNum = new TextField();
-		grid.add(donorPhoneNum, 2, 1);
-		grid.add(new Label("Amount"), 0, 2);
+		grid.add(donorPhoneNum, 0, 1);
+		grid.add(new Label("Amount"), 1, 0);
 		amount = new TextField();
-		grid.add(amount, 0, 3);
-		grid.add(new Label("Date"), 1, 2);
+		grid.add(amount, 1, 1);
+		grid.add(new Label("Date"), 2, 0);
 		date = new DatePicker();
 		date.setValue(LocalDate.now());
 		date.setDayCellFactory(picker -> new DateCell() {
@@ -59,14 +46,24 @@ public class AddDonationWindow {
 				setDisable(empty || date.compareTo(today) > 0);
 			}
 		});
-		grid.add(date, 1, 3);
-		grid.add(new Label("Branch Name"), 2, 2);
+		grid.add(date, 2, 1);
+		grid.add(new Label("Branch Name"), 3, 0);
 		branchName = new TextField();
-		grid.add(branchName, 2, 3);
+		grid.add(branchName, 3, 1);
 		
 		Button okButton = new Button("OK");
 		okButton.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
-//		okButton.setOnAction(new addCallData());
+		okButton.setOnAction(e -> {
+			if(!(donorPhoneNum.getText().isBlank() || amount.getText().isBlank() || branchName.getText().isBlank())) {
+				try {
+					DonationIO.addDonationData(donorPhoneNum.getText(), amount.getText(), date.getValue(), branchName.getText(), dbconnection);
+				} catch (SQLException e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage());
+				}
+			}else {
+				JOptionPane.showMessageDialog(null, "Please fill in all fields");
+			}
+		});
 		Button backButton = new Button("Back");
 		backButton.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
 		backButton.setOnAction(e -> mainWindow.setScene(mainScene));
