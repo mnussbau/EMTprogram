@@ -28,6 +28,7 @@ public class MainClass extends Application {
 	public void start(Stage mainWindow) throws Exception {
 		String url = "jdbc:sqlserver://localhost:1433;instance=SQLEXPRESS01;databaseName=Hatzolah;integratedSecurity=true";
 		dbconnection = DriverManager.getConnection(url);
+		dbconnection.setAutoCommit(false);
 		mainWindow.setHeight(500);
 		mainWindow.setWidth(600);
 		mainWindow.setTitle("Hatzolah");
@@ -40,7 +41,7 @@ public class MainClass extends Application {
 
 		MenuItem addBranchMenuItem = new MenuItem("Branch");
 		addBranchMenuItem.setOnAction(e -> {
-			new AddBranchWindow();
+			new AddBranchWindow(mainWindow,dbconnection);
 		});
 		MenuItem addBusMenuItem = new MenuItem("Bus");
 		addBusMenuItem.setOnAction(e -> {
@@ -62,13 +63,17 @@ public class MainClass extends Application {
 		addDonorMenuItem.setOnAction(e -> {
 			new AddDonorWindow(mainWindow, dbconnection);
 		});
+		MenuItem addEqupmentMenuItem = new MenuItem("Equpment");
+		addEqupmentMenuItem.setOnAction(e-> {
+			new AddEquipmentWindow(mainWindow,dbconnection);
+		});
 		MenuItem addJobTitleMenuItem = new MenuItem("Job Title");
 		addJobTitleMenuItem.setOnAction(e -> {
 			new AddJobTitleWindow(mainWindow, dbconnection);
 		});
 		MenuItem addMemberMenuItem = new MenuItem("Member");
 		addMemberMenuItem.setOnAction(e -> {
-			new AddMemberWindow();
+			new AddMemberWindow(mainWindow, dbconnection);
 		});
 		MenuItem addPurchaseEquipmentMenuItem = new MenuItem("Purchase Equipment");
 		addPurchaseEquipmentMenuItem.setOnAction(e -> {
@@ -79,7 +84,7 @@ public class MainClass extends Application {
 			new AddSymptomWindow(mainWindow, dbconnection);
 		});
 		addMenu.getItems().addAll(addBranchMenuItem, addBusMenuItem, addCallMenuItem, addCredentialsMenuItem,
-				addDonationMenuItem, addDonorMenuItem, addJobTitleMenuItem, addMemberMenuItem,
+				addDonationMenuItem, addDonorMenuItem,addEqupmentMenuItem, addJobTitleMenuItem, addMemberMenuItem,
 				addPurchaseEquipmentMenuItem, addSymptomMenuItem);
 
 		MenuItem updateBusInfoMenuItem = new MenuItem("Bus Info");
@@ -96,7 +101,7 @@ public class MainClass extends Application {
 		});
 		updateMenu.getItems().addAll(updateBusInfoMenuItem, updateDonorInfoMenuItem, memberInfoMenuItem);
 
-		ArrayList<Branch> branches = BranchData.getBranch();
+		ArrayList<Branch> branches = BranchData.getBranch(dbconnection);
 		for (int i = 0; i < branches.size(); i++) {
 			int x = i;
 			MenuItem branchItem = new MenuItem(branches.get(i).getBranchName());

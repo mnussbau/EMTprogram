@@ -5,7 +5,8 @@ import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
-import hatzalahData.BranchData;
+import hatzalahData.EquipmentIO;
+import hatzalahData.SymptomIO;
 import hatzalahGui.AddSymptomWindow.OkButton_click;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,34 +18,26 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class AddBranchWindow extends Stage {
-	private TextField branchNameTxtBx;
-	private TextField yearEstTxtBx;
-	private TextField initialTxtBx;
+public class AddEquipmentWindow {
 	private Scene mainScene;
-
-	public AddBranchWindow(Stage mainWindow,Connection db) {
+	private TextField equipNameTxtBx;
+	
+	public AddEquipmentWindow(Stage mainWindow, Connection c) {
 		mainScene = mainWindow.getScene();
+
 		BorderPane borderLayout = new BorderPane();
 		borderLayout.setStyle("-fx-background-color: Azure");
 		GridPane grid = new GridPane();
-		grid.add(new Label("Branch Name:"), 0, 0);
-		branchNameTxtBx = new TextField();
-		grid.add(branchNameTxtBx, 0, 1);
-		grid.add(new Label("Year Established"), 1, 0);
-		yearEstTxtBx = new TextField();
-		grid.add(yearEstTxtBx, 1, 1);
-		grid.add(new Label("Branch Initial"), 2, 0);
-		initialTxtBx = new TextField();
-		grid.add(initialTxtBx, 2, 1);
+		grid.add(new Label("Equipment Name:"), 0, 0);
+		equipNameTxtBx = new TextField();
+		grid.add(equipNameTxtBx, 0, 1);
 		borderLayout.setTop(grid);
 
 		Button okButton = new Button("OK");
 		okButton.setStyle("-fx-background-color: Lavender");
-		okButton.setOnAction(new OkButton_click(db));
+		okButton.setOnAction(new OkButton_click(c));
 		Button backButton = new Button("Back");
 		backButton.setStyle("-fx-background-color: Lavender");
 		backButton.setOnAction(e -> mainWindow.setScene(mainScene));
@@ -68,44 +61,23 @@ public class AddBranchWindow extends Stage {
 
 		@Override
 		public void handle(ActionEvent arg0) {
-			if (branchNameTxtBx.getText().isBlank() || yearEstTxtBx.getText().isBlank()
-					|| initialTxtBx.getText().isBlank()) {
+			if (equipNameTxtBx.getText().isBlank()) {
 				JOptionPane.showMessageDialog(null, "You need to fill in all the fields");
 				return;
 			}
-			String branchName = branchNameTxtBx.getText();
-			if (branchName.length() > 45) {
-				JOptionPane.showMessageDialog(null, "Branch name too is long.");
+			String equipName = equipNameTxtBx.getText();
+			if (equipName.length() > 45) {
+				JOptionPane.showMessageDialog(null, "Symptom name too is long.");
 				return;
 			}
-			String initial = initialTxtBx.getText();
-			if (initial.length() > 2) {
-				JOptionPane.showMessageDialog(null, "Branch initial too is long.");
-				return;
-			}
-			String yearEst = yearEstTxtBx.getText();
-			if (!canParseInt(yearEst) || yearEst.length() != 4) {
-				JOptionPane.showMessageDialog(null, "Please check the year.");
-				return;
-			}
-
 			try {
-				BranchData.addBranch(dbConnection, branchName, yearEst, initial);
-				branchNameTxtBx.clear();
+				EquipmentIO.addEquipment(dbConnection, equipName);
+				equipNameTxtBx.clear();
 				JOptionPane.showMessageDialog(null, "Record Added");
 			} catch (SQLException ex) {
 				JOptionPane.showMessageDialog(null, "error occurred - " + ex.getMessage());
 			}
 
-		}
-
-		private boolean canParseInt(String yearEst) {
-			try {
-				Integer.parseInt(yearEst);
-				return true;
-			} catch (NumberFormatException e) {
-				return false;
-			}
 		}
 
 	}
