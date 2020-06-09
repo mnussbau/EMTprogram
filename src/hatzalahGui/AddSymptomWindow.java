@@ -1,49 +1,21 @@
 package hatzalahGui;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.CallableStatement;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.NClob;
-import java.sql.ParameterMetaData;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.RowId;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.Map;
+import java.sql.*;
 
 import javax.swing.JOptionPane;
 
-import hatzalahData.SymptomIO;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
+import hatzalahData.*;
+import javafx.event.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
 
 public class AddSymptomWindow extends Stage{
 	private Scene mainScene;
 	private TextField symptomName;
 	private Connection dbConnection;
-	private Label alertLabel;
 	
 	public AddSymptomWindow(Stage mainWindow, Connection connection) {
 		mainScene = mainWindow.getScene();
@@ -54,9 +26,6 @@ public class AddSymptomWindow extends Stage{
 		grid.add(new Label("Symtom Name:"), 0, 0);
 		symptomName = new TextField();
 		grid.add(symptomName, 0, 1);
-		alertLabel = new Label("Error");
-		alertLabel.setVisible(false);
-		grid.add(alertLabel, 0, 2);
 		borderLayout.setTop(grid);
 
 		
@@ -78,34 +47,28 @@ public class AddSymptomWindow extends Stage{
 	}
 	
 	class OkButton_click implements EventHandler<ActionEvent> {
-		private Connection dbconnection;
+		private Connection dbConnection;
 		
 		public OkButton_click(Connection connection) {
-			dbConnection =connection;
+			this.dbConnection =connection;
 		}
 		@Override
 		public void handle(ActionEvent arg0) {
-			alertLabel.setVisible(false);
 			if(symptomName.getText().isBlank()) {
-				alertLabel.setText("You need to fill in all the fields");
-				alertLabel.setVisible(true);
+				JOptionPane.showMessageDialog(null, "You need to fill in all the fields");
 				return;
 			}
 			String symptom = symptomName.getText();
 			if(symptom.length()>45) {
-				alertLabel.setText("Symptom name too is long.");
-				alertLabel.setVisible(true);
+				JOptionPane.showMessageDialog(null, "Symptom name too is long.");
 				return;
-			}
-			
+			}	
 			try {
 				SymptomIO.addSymptom(dbConnection, symptom);
 				symptomName.clear();
-				alertLabel.setText("Record Added");
-				alertLabel.setVisible(true);
+				JOptionPane.showMessageDialog(null, "Record Added");
 			}catch(SQLException ex) {
-				alertLabel.setText("error occurred - "+ ex.getMessage());
-				alertLabel.setVisible(true);
+				JOptionPane.showMessageDialog(null, "error occurred - "+ ex.getMessage());			
 			}
 			
 		}

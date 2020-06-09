@@ -2,8 +2,17 @@ package hatzalahGui;
 
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
+
+import hatzalahBusiness.Symptom;
+import hatzalahData.BranchData;
+import hatzalahData.CallIO;
+import hatzalahData.EquipmentIO;
+import hatzalahData.MemberIO;
+import hatzalahData.SymptomIO;
 
 import java.time.*;
 
@@ -19,18 +28,18 @@ import javafx.util.Callback;
 
 public class AddCallWindow extends Stage {
 	Connection dbConnection;
-	TextField branchName;
-	DatePicker dateOfCall;
-	TextField streetAddress;
-	ComboBox<String> state;
-	TextField city;
-	TextField zip;
-	TextField fname;
-	TextField lname;
-	TextField age;
+	ComboBox<String> branchNameComboBx;
+	DatePicker dateOfCallDtPckr;
+	TextField streetAddressTxtBx;
+	ComboBox<String> stateCmBx;
+	TextField cityTxtBx;
+	TextField zipTxtBx;
+	TextField fnameTxtBx;
+	TextField lnameTxtBx;
+	TextField ageTxtBx;
 	ComboBox<Character> transferedCmboBx;
-	TextField VIN;
-	TextArea notes;
+	TextField VINtxtBx;
+	TextArea notesTxtArea;
 	Scene mainScene;
 	ListView<String> symptomsView;
 	ListView<String> membersView;
@@ -46,10 +55,10 @@ public class AddCallWindow extends Stage {
 		transferedCmboBx.setStyle("-fx-background-color: Lavender");
 		transferedCmboBx.setOnAction(e -> {
 			if (transferedCmboBx.getValue() == 'Y') {
-				VIN.setVisible(true);
+				VINtxtBx.setVisible(true);
 				vinLabel.setVisible(true);
 			} else {
-				VIN.setVisible(false);
+				VINtxtBx.setVisible(false);
 				vinLabel.setVisible(false);
 			}
 		});
@@ -59,95 +68,100 @@ public class AddCallWindow extends Stage {
 		borderLayout.setStyle("-fx-background-color: Azure");
 		GridPane grid = new GridPane();
 		grid.add(new Label("Branch Name:"), 0, 0);
-		branchName = new TextField();
-		grid.add(branchName, 0, 1);
+		try {
+			branchNameComboBx = new ComboBox<>(FXCollections.observableArrayList(BranchData.getBranch(dbConnection).stream().map(b->b.getBranchName()).collect(Collectors.toList())));
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, "Cannot connect to database.");
+			mainWindow.setScene(mainScene);
+		}
+		grid.add(branchNameComboBx, 0, 1);
 		grid.add(new Label("Date of Call: "), 1, 0);
-		dateOfCall = new DatePicker();
-		dateOfCall.setValue(LocalDate.now());
+		dateOfCallDtPckr = new DatePicker();
+		dateOfCallDtPckr.setValue(LocalDate.now());
 
-		dateOfCall.setDayCellFactory(picker -> new DateCell() {
+		dateOfCallDtPckr.setDayCellFactory(picker -> new DateCell() {
 			public void updateItem(LocalDate date, boolean empty) {
 				super.updateItem(date, empty);
 				LocalDate today = LocalDate.now();
 				setDisable(empty || date.compareTo(today) > 0);
 			}
 		});
-		grid.add(dateOfCall, 1, 1);
+		grid.add(dateOfCallDtPckr, 1, 1);
 		grid.add(new Label("Street Address: "), 0, 4);
-		streetAddress = new TextField();
-		grid.add(streetAddress, 0, 5);
+		streetAddressTxtBx = new TextField();
+		grid.add(streetAddressTxtBx, 0, 5);
 		grid.add(new Label("City:"), 1, 4);
-		city = new TextField();
-		grid.add(city, 1, 5);
+		cityTxtBx = new TextField();
+		grid.add(cityTxtBx, 1, 5);
 		grid.add(new Label("State:"), 2, 4);
 		String[] listOfStates = { "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN",
 				"IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM",
 				"NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV",
 				"WI", "WY" };
-		state = new ComboBox<String>(FXCollections.observableArrayList(listOfStates));
-		state.resize(150, 150);
-		state.setStyle("-fx-background-color: Lavender");
-		state.setValue("NY");
-		grid.add(state, 2, 5);
+		stateCmBx = new ComboBox<String>(FXCollections.observableArrayList(listOfStates));
+		stateCmBx.resize(150, 150);
+		stateCmBx.setStyle("-fx-background-color: Lavender");
+		stateCmBx.setValue("NY");
+		grid.add(stateCmBx, 2, 5);
 		grid.add(new Label("Zip:"), 3, 4);
-		zip = new TextField();
-		grid.add(zip, 3, 5);
+		zipTxtBx = new TextField();
+		grid.add(zipTxtBx, 3, 5);
 		grid.add(new Label("First Name:"), 0, 2);
-		fname = new TextField();
-		grid.add(fname, 0, 3);
+		fnameTxtBx = new TextField();
+		grid.add(fnameTxtBx, 0, 3);
 		grid.add(new Label("Last Name"), 1, 2);
-		lname = new TextField();
-		grid.add(lname, 1, 3);
+		lnameTxtBx = new TextField();
+		grid.add(lnameTxtBx, 1, 3);
 		grid.add(new Label("Age:"), 2, 2);
-		age = new TextField();
-		grid.add(age, 2, 3);
+		ageTxtBx = new TextField();
+		grid.add(ageTxtBx, 2, 3);
 		grid.add(new Label("Transferred?"), 2, 0);
 		grid.add(transferedCmboBx, 2, 1);
 		grid.add(vinLabel, 3, 0);
-		VIN = new TextField();
-		VIN.setVisible(false);
-		grid.add(VIN, 3, 1);
+		VINtxtBx = new TextField();
+		VINtxtBx.setVisible(false);
+		grid.add(VINtxtBx, 3, 1);
 		grid.add(new Label("Notes:"), 0, 10);
 
 		symptomsView = new ListView<>();
-		symptomsView.setMaxHeight(50);
+		symptomsView.setMaxHeight(75);
 		symptomsView.setMaxWidth(150);
 		Button addSymptomBtn = new Button("Add Symptom");
 //		addSymptomBtn.setStyle("-fx-border-color: black; -fx-border-width: 0 3 3 0;");
-		addSymptomBtn.setOnAction(new addSymptomToCall_click(db));
+		addSymptomBtn.setOnAction(new addSymptomToCall_click(dbConnection));
 		addSymptomBtn.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
 		grid.add(new Label("Symptoms"), 0, 6);
 		grid.add(symptomsView, 0, 7);
 		grid.add(addSymptomBtn, 0, 8);
 
 		membersView = new ListView<>();
-		membersView.setMaxHeight(50);
+		membersView.setMaxHeight(75);
 		membersView.setMaxWidth(174);
 		Button addMemberBtn = new Button("Add Member");
-		addMemberBtn.setOnAction(new AddMemberToCall_click(db));
+		addMemberBtn.setOnAction(new AddMemberToCall_click(dbConnection));
 		addMemberBtn.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
 		grid.add(new Label("Members"), 1, 6);
 		grid.add(membersView, 1, 7);
 		grid.add(addMemberBtn, 1, 8);
 
 		equipmentView = new ListView<>();
-		equipmentView.setMaxHeight(50);
+		equipmentView.setMaxHeight(75);
 		equipmentView.setMaxWidth(150);
 		Button addEquipBtn = new Button("Add Equipment");
-		addEquipBtn.setOnAction(new AddEquipToCall_click(db));
+		addEquipBtn.setOnAction(new AddEquipToCall_click(dbConnection));
 		addEquipBtn.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
 		grid.add(new Label("Equipment"), 2, 6);
 		grid.add(equipmentView, 2, 7);
 		grid.add(addEquipBtn, 2, 8);
 
-		notes = new TextArea();
-		notes.setMaxHeight(100);
+		notesTxtArea = new TextArea();
+		notesTxtArea.setMaxHeight(100);
 
 		Label alertLabel = new Label("You need to fill in all fields");
 		alertLabel.setVisible(false);
 		Button okButton = new Button("OK");
 		okButton.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
-		okButton.setOnAction(new addCallData());
+		okButton.setOnAction(new addCallData(dbConnection));
 		borderLayout.setTop(grid);
 		Button backButton = new Button("Back");
 		backButton.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
@@ -156,81 +170,88 @@ public class AddCallWindow extends Stage {
 		hbox.getChildren().addAll(okButton, backButton, alertLabel);
 		HBox.setMargin(okButton, new Insets(2, 2, 2, 2));
 		HBox.setMargin(backButton, new Insets(2, 2, 2, 2));
-		borderLayout.setCenter(new HBox(notes));
+		borderLayout.setCenter(new HBox(notesTxtArea));
 		borderLayout.setBottom(hbox);
 		Scene scene = new Scene(borderLayout);
 		mainWindow.setScene(scene);
 		mainWindow.sizeToScene();
-//		this.initModality(Modality.APPLICATION_MODAL);
-//		this.show();
+
 	}
 
 	class addCallData implements EventHandler<ActionEvent> {
+		Connection db;
 		String branchName;
-		LocalDate callreceived;
-		String streetaddress;
-		String city;
-		String state;
-		String zip;
+		LocalDate callReceived;
 		String fname;
 		String lname;
-		Integer age;
-		Character choice;
-		String vin2;
-		Connection dbConnection;
+		int age;
+		String addrStreet;
+		String addrCity;
+		String addrState;
+		String zip;
+		char transfered;
+		String vin;
+		String notes;
+		List<String> symptoms;
+		List<String> members;
+		List<String> equipment;
+
+		public addCallData(Connection db) {
+			this.db = db;
+			
+		}
+
+		private boolean canParseInt(String number) {
+			try {
+				Integer.parseInt(number);
+				return true;
+			} catch (NumberFormatException e) {
+				return false;
+			}
+
+		}
 
 		@Override
 		public void handle(ActionEvent event) {
-			// (String branchName, LocalDate callreceived, String streetaddress, String
-			// city,
-			// String state, String zip, String fname, String lname, Integer age, Character
-			// choice, String vin2)
-			// throws SQLException, Exception {
-
-			// branchname
-			// callreceived date
-			// address - whhole address state city zip street
-			// fname, lastname, age,
-			// transferred Y or no
-			// vin
-			// notes
-
+			if (branchNameComboBx.getValue().isBlank() || fnameTxtBx.getText().isBlank() || lnameTxtBx.getText().isBlank()
+					|| ageTxtBx.getText().isBlank() || streetAddressTxtBx.getText().isBlank()
+					|| cityTxtBx.getText().isBlank() || stateCmBx.getValue().isBlank()
+					|| zipTxtBx.getText().isBlank()) {
+				JOptionPane.showMessageDialog(null, "All fields must be filled out.");
+				return;
+			}
+			if(transferedCmboBx.getValue() == 'Y' && VINtxtBx.getText().isBlank()) {
+				JOptionPane.showMessageDialog(null, "Vin cannot be blank if the patient was transfered.");
+				return;
+			}
+			branchName = branchNameComboBx.getValue();
+			callReceived = dateOfCallDtPckr.getValue();
+			fname = fnameTxtBx.getText();
+			lname = lnameTxtBx.getText();
+			if (!canParseInt(ageTxtBx.getText())) {
+				JOptionPane.showMessageDialog(null, "Age must be a number.");
+				return;
+			}
+			age = Integer.parseInt(ageTxtBx.getText());
+			addrStreet = streetAddressTxtBx.getText();
+			addrCity = cityTxtBx.getText();
+			addrState = stateCmBx.getValue();
+			if (zipTxtBx.getText().length() != 5 || !canParseInt(zipTxtBx.getText())) {
+				JOptionPane.showMessageDialog(null, "Please check the zipcode");
+				return;
+			}
+			zip = zipTxtBx.getText();
+			transfered = transferedCmboBx.getValue();
+			vin = VINtxtBx.getText();
+			notes = notesTxtArea.getText();
+			symptoms = symptomsView.getItems();
+			members = membersView.getItems();
+			equipment = equipmentView.getItems();
 			try {
-				dbConnection.setAutoCommit(false);
-				CallableStatement cStatement;
-
-				String sql = "{call usp_addCall(?,?,?,?,?,?,?,?,?,?,?,?)}";
-				cStatement = dbConnection.prepareCall(sql);
-				cStatement.setString(1, branchName);
-				cStatement.setString(2, streetaddress);
-				cStatement.setString(3, city);
-				cStatement.setString(4, state);
-				cStatement.setString(5, zip);
-				cStatement.setString(6, fname);
-				cStatement.setString(7, lname);
-				cStatement.setInt(8, age);
-				cStatement.setString(9, "" + choice);
-				cStatement.setString(10, null);
-				cStatement.setDate(11, java.sql.Date.valueOf(callreceived.toString()));
-				cStatement.setString(12, null);
-				ResultSet rs = cStatement.executeQuery();
-
-				// cStatement.execute();
-				System.out.println(cStatement.getUpdateCount());
-				// cStatement.getMoreResults();
-				System.out.println("all is well about to commit");
-
-				dbConnection.commit();
-
-				if (rs.next()) {
-					System.out.println("Equipment ID: " + rs.getString("newCallId"));
-				}
-
-				System.out.println("committed the transaction");
+				CallIO.addCall(db, branchName, callReceived, fname, lname, age, addrStreet, addrCity, addrState, zip,
+						transfered, vin, notes, symptoms, members, equipment);
 			} catch (SQLException sqlE) {
-				System.out.println("problem occurred " + sqlE.getMessage());
-				// dbConnection.rollback();
-
+				JOptionPane.showMessageDialog(null, "A problem occurred: " + sqlE.getMessage());
 			}
 		}
 
@@ -247,13 +268,10 @@ public class AddCallWindow extends Stage {
 
 		@Override
 		public void handle(ActionEvent arg0) {
-			List<String> allSymptoms = new ArrayList<>();
+			List<String> allSymptoms;
 			try {
-				Statement statement = dbConnection.createStatement();
-				ResultSet rs = statement.executeQuery("select Symptom_desc from SYMPTOM");
-				while (rs.next()) {
-					allSymptoms.add(rs.getString("Symptom_desc"));
-				}
+				allSymptoms = SymptomIO.getSymptoms(dbConnection).stream().map(s -> s.getSymptomDesc())
+						.collect(Collectors.toList());
 			} catch (SQLException ex) {
 				JOptionPane.showMessageDialog(null, "Something went wrong." + ex.getMessage());
 				return;
@@ -281,33 +299,21 @@ public class AddCallWindow extends Stage {
 
 		@Override
 		public void handle(ActionEvent arg0) {
-			List<String> allMembers = new ArrayList<>();
-			int branchId;
+			List<String> allMembers;
+			Integer branchId;
+			String branchName = branchNameComboBx.getValue();
 			try {
-				branchName.setDisable(true);
-				CallableStatement stmt = db.prepareCall("select branch_id from branch where branch_name = ?;");
-				stmt.setString(1, branchName.getText());
-				ResultSet set = stmt.executeQuery();
-				if (set.next()) {
-					branchId = set.getInt("branch_id");
-				} else {
-					branchName.setDisable(false);
-					JOptionPane.showMessageDialog(null,
-							"Branch name not valid. Please input valid branch name to add a member");
+				branchNameComboBx.setDisable(true);
+				branchId = BranchData.getBranchId(db, branchName);
+				if(branchId == null) {
+					JOptionPane.showMessageDialog(null, "Please choose a branch name before adding members.");
+					branchNameComboBx.setDisable(false);
 					return;
 				}
-
-				Statement statement = dbConnection.createStatement();
-				ResultSet rs = statement
-						.executeQuery("select member_id+': '+fname+' '+lname as member from MEMBER where branch_id = "
-								+ branchId + ";");
-
-				while (rs.next()) {
-					allMembers.add(rs.getString("member"));
-				}
+				allMembers = MemberIO.getMembers(db).stream().filter(m -> m.getBranch_id()==branchId).map(m->m.getMemberId()+": "+m.getFname()+" "+m.getLname()).collect(Collectors.toList());
 			} catch (SQLException ex) {
 				JOptionPane.showMessageDialog(null, "Something went wrong." + ex.getMessage());
-				System.out.println(ex.getStackTrace().toString());
+				branchNameComboBx.setDisable(false);
 				return;
 			}
 
@@ -332,16 +338,11 @@ public class AddCallWindow extends Stage {
 
 		@Override
 		public void handle(ActionEvent arg0) {
-			List<String> allEquipment = new ArrayList<>();
+			List<String> allEquipment;
 			try {
-				Statement statement = dbConnection.createStatement();
-				ResultSet rs = statement.executeQuery("select Equip_desc from EQUIPMENT;");
-				while (rs.next()) {
-					allEquipment.add(rs.getString("Equip_desc"));
-				}
+				allEquipment =EquipmentIO.getEquipment(db).stream().map(e->e.getEquip_desc()).collect(Collectors.toList());
 			} catch (SQLException ex) {
 				JOptionPane.showMessageDialog(null, "Something went wrong." + ex.getMessage());
-				System.out.println(ex.getStackTrace().toString());
 				return;
 			}
 			currentEquipment.forEach(m -> allEquipment.remove(m));
