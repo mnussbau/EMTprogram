@@ -57,6 +57,7 @@ public class MemberIO {
 			}
 
 		} catch (SQLException sqlE) {
+			dbConnection.rollback();
 			throw sqlE;
 		}
 		return memberId;

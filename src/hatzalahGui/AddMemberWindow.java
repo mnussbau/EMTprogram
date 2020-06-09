@@ -210,6 +210,7 @@ public class AddMemberWindow extends Stage {
 							status.getValue(), street.getText(), city.getText(), state.getValue(), zip.getText(),
 							dbconnection);
 					JOptionPane.showMessageDialog(null, "Your member id is " + memberId);
+					clearInputs();
 				} catch (SQLException e1) {
 					JOptionPane.showMessageDialog(null, e1.getMessage());
 				}
@@ -232,6 +233,16 @@ public class AddMemberWindow extends Stage {
 		mainWindow.setScene(thisScene);
 		mainWindow.sizeToScene();
 
+	}
+
+	private void clearInputs() {
+		fname.clear();
+		lname.clear();
+		phoneNum.clear();
+		street.clear();
+		city.clear();
+		zip.clear();
+		
 	}
 
 }

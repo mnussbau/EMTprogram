@@ -3,13 +3,18 @@ package hatzalahGui;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
+import hatzalahBusiness.Branch;
+import hatzalahData.BranchData;
 import hatzalahData.DonationIO;
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -23,7 +28,7 @@ public class AddDonationWindow {
 	private TextField donorPhoneNum;
 	private TextField amount;
 	private DatePicker date;
-	private TextField branchName;
+	private ComboBox<String> branchName;
 	Scene mainScene;
 	
 	public AddDonationWindow(Stage mainWindow, Connection dbconnection) {
@@ -48,15 +53,36 @@ public class AddDonationWindow {
 		});
 		grid.add(date, 2, 1);
 		grid.add(new Label("Branch Name"), 3, 0);
-		branchName = new TextField();
+		ArrayList<Branch> branches = null;
+		try {
+			branches = BranchData.getBranch(dbconnection);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			System.out.println(e1.getMessage());
+			e1.printStackTrace();
+		}
+		String[] branchNames = new String[branches.size()];
+		for (int i = 0; i < branches.size(); i++) {
+			branchNames[i] = branches.get(i).getBranchName();
+		}
+		branchName = new ComboBox<String>(FXCollections.observableArrayList(branchNames));
+		branchName.setStyle("-fx-background-color: Lavender;-fx-border-color: MEDIUMPURPLE;-fx-border-width: 1 1 1 1;");
+		if (branchNames.length > 0) {
+			branchName.setValue(branchNames[0]);
+		} else {
+			branchName.setValue("Add Branch");
+		}
+		branchName.setMaxWidth(150);
 		grid.add(branchName, 3, 1);
 		
 		Button okButton = new Button("OK");
 		okButton.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
 		okButton.setOnAction(e -> {
-			if(!(donorPhoneNum.getText().isBlank() || amount.getText().isBlank() || branchName.getText().isBlank())) {
+			if(!(donorPhoneNum.getText().isBlank() || amount.getText().isBlank() || branchName.getValue().equals("Add Branch"))) {
 				try {
-					DonationIO.addDonationData(donorPhoneNum.getText(), amount.getText(), date.getValue(), branchName.getText(), dbconnection);
+					DonationIO.addDonationData(donorPhoneNum.getText(), amount.getText(), date.getValue(), branchName.getValue(), dbconnection);
+					JOptionPane.showMessageDialog(null, "You successfully made a donation!");
+					clearInputs();
 				} catch (SQLException e1) {
 					JOptionPane.showMessageDialog(null, e1.getMessage());
 				}
@@ -77,6 +103,11 @@ public class AddDonationWindow {
 		layout.setStyle("-fx-background-color: Azure");
 		Scene thisScene = new Scene(layout);
 		mainWindow.setScene(thisScene);
+	}
+
+	private void clearInputs() {
+		donorPhoneNum.clear();
+		amount.clear();	
 	}
 
 }

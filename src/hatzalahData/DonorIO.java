@@ -2,6 +2,7 @@ package hatzalahData;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DonorIO {
@@ -11,7 +12,7 @@ public class DonorIO {
 		try {
 			dbConnection.setAutoCommit(false);
 			CallableStatement cStatement;
-			String sql = "{call usp_AddMember(?,?,?,?,?,?,?)}";
+			String sql = "{call usp_AddDonor(?,?,?,?,?,?,?)}";
 			cStatement = dbConnection.prepareCall(sql);
 			cStatement.setString(1, fname);
 			cStatement.setString(2, lname);
@@ -20,10 +21,11 @@ public class DonorIO {
 			cStatement.setString(5, city);
 			cStatement.setString(6, state);
 			cStatement.setString(7, zip);
-			cStatement.executeQuery();
+			cStatement.execute();
+			cStatement.getMoreResults();
 			dbConnection.commit();
 		} catch (SQLException sqlE) {
-			//not working : it throws an error; error converting data type nvarchar to date. 
+			dbConnection.rollback();
 			throw sqlE;
 		}
 	}

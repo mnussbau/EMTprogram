@@ -26,7 +26,7 @@ public class MainClass extends Application {
 
 	@Override
 	public void start(Stage mainWindow) throws Exception {
-		String url = "jdbc:sqlserver://localhost:1433;instance=SQLEXPRESS01;databaseName=Hatzolah;integratedSecurity=true";
+		String url = "jdbc:sqlserver://localhost:1433;instance=SQLEXPRESS;databaseName=Hatzolah;integratedSecurity=true";
 		dbconnection = DriverManager.getConnection(url);
 		dbconnection.setAutoCommit(false);
 		mainWindow.setHeight(500);

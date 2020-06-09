@@ -72,6 +72,8 @@ public class AddDonorWindow {
 				try {
 					DonorIO.addDonorData(fname.getText(), lname.getText(), phoneNumber.getText(), 
 							streetAddress.getText(), city.getText(), state.getValue(), zip.getText(), dbconnection);
+					JOptionPane.showMessageDialog(null, "You successfully added a Donor!");
+					clearInputs();
 				} catch (SQLException e1) {
 					JOptionPane.showMessageDialog(null, e1.getMessage());
 				}
@@ -92,6 +94,17 @@ public class AddDonorWindow {
 		layout.setStyle("-fx-background-color: Azure");
 		Scene thisScene = new Scene(layout);
 		mainWindow.setScene(thisScene);
+		
+	}
+
+
+	private void clearInputs() {
+		fname.clear();
+		lname.clear();
+		phoneNumber.clear();
+		streetAddress.clear();
+		city.clear();
+		zip.clear();
 		
 	}
 	

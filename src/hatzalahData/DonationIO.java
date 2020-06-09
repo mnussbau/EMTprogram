@@ -1,5 +1,6 @@
 package hatzalahData;
 
+import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -12,16 +13,17 @@ public class DonationIO {
 		try {
 			dbConnection.setAutoCommit(false);
 			CallableStatement cStatement;
-			String sql = "{call usp_AddMember(?,?,?,?)}";
+			String sql = "{call usp_addDonation(?,?,?,?)}";
 			cStatement = dbConnection.prepareCall(sql);
 			cStatement.setString(1, phoneNum);
-			cStatement.setDouble(2, Double.parseDouble(amount));
-			cStatement.setDate(3, java.sql.Date.valueOf(date.toString()));
+			cStatement.setBigDecimal(2, new BigDecimal(amount));
+			cStatement.setDate(3, java.sql.Date.valueOf(date));
 			cStatement.setString(4, branch);
-			cStatement.executeQuery();
+			cStatement.execute();
+			cStatement.getMoreResults();
 			dbConnection.commit();
 		} catch (SQLException sqlE) {
-			//throws an error converting nvarchar to date
+			dbConnection.rollback();
 			throw sqlE;
 		}
 	}
