@@ -1,5 +1,8 @@
 package hatzalahData;
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -13,7 +16,23 @@ import hatzalahBusiness.Branch;
 import hatzalahBusiness.Credential;
 
 public class CredentialIO {
-	
+public static void AddCredentialData(Connection db, String credential) throws SQLException {
+		
+		try {
+			db.setAutoCommit(false);
+			CallableStatement stmt;
+			String sql = "{call usp_AddCredential(?)}";
+			stmt = db.prepareCall(sql);
+			stmt.setString(1, credential);	
+			stmt.execute();
+			stmt.getMoreResults();
+			db.commit();
+			return;
+		}catch(SQLException ex) {
+			db.rollback();
+			throw ex;
+		}
+}
 	public static ArrayList<Credential> getCredentials(Connection dbConnection)throws SQLException{
 		ArrayList<Credential> credentials = new ArrayList<Credential>();
 		try {

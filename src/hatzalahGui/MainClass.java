@@ -45,7 +45,7 @@ public class MainClass extends Application {
 		});
 		MenuItem addBusMenuItem = new MenuItem("Bus");
 		addBusMenuItem.setOnAction(e -> {
-			new AddBusWindow();
+			new AddBusWindow(mainWindow, dbconnection);
 		});
 		MenuItem addCallMenuItem = new MenuItem("Call");
 		addCallMenuItem.setOnAction(e -> {
@@ -53,7 +53,7 @@ public class MainClass extends Application {
 		});
 		MenuItem addCredentialsMenuItem = new MenuItem("Credential");
 		addCredentialsMenuItem.setOnAction(e -> {
-			new AddCredentialsWindow();
+			new AddCredentialsWindow(mainWindow, dbconnection);
 		});
 		MenuItem addDonationMenuItem = new MenuItem("Donation");
 		addDonationMenuItem.setOnAction(e -> {
@@ -69,7 +69,7 @@ public class MainClass extends Application {
 		});
 		MenuItem addJobTitleMenuItem = new MenuItem("Job Title");
 		addJobTitleMenuItem.setOnAction(e -> {
-			new AddJobTitleWindow();
+			new AddJobTitleWindow(mainWindow, dbconnection);
 		});
 		MenuItem addMemberMenuItem = new MenuItem("Member");
 		addMemberMenuItem.setOnAction(e -> {
@@ -81,7 +81,7 @@ public class MainClass extends Application {
 		});
 		MenuItem addSymptomMenuItem = new MenuItem("Symptom");
 		addSymptomMenuItem.setOnAction(e -> {
-			new AddSymptomWindow(mainWindow,dbconnection);
+			new AddSymptomWindow(mainWindow, dbconnection);
 		});
 		addMenu.getItems().addAll(addBranchMenuItem, addBusMenuItem, addCallMenuItem, addCredentialsMenuItem,
 				addDonationMenuItem, addDonorMenuItem,addEqupmentMenuItem, addJobTitleMenuItem, addMemberMenuItem,
