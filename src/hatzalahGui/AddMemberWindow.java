@@ -157,7 +157,7 @@ public class AddMemberWindow extends Stage {
 		for (int i = 0; i < jobs.size(); i++) {
 			jobDescriptions[i] = jobs.get(i).getDescription();
 		}
-		jobName = new ComboBox<String>(FXCollections.observableArrayList());
+		jobName = new ComboBox<String>(FXCollections.observableArrayList(jobDescriptions));
 		jobName.setMaxWidth(174);
 		jobName.setStyle("-fx-background-color: Lavender;-fx-border-color: MEDIUMPURPLE;-fx-border-width: 1 1 1 1;");
 		if (credentialDescriptions.length > 0) {
