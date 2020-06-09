@@ -1,14 +1,16 @@
 package hatzalahGui;
 
 import java.sql.Connection;
-import java.time.LocalDate;
+import java.sql.SQLException;
 
+import javax.swing.JOptionPane;
+
+import hatzalahData.DonorIO;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -17,15 +19,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public class AddDonorWindow {
-	/*
-	 * Fname
-	 *  Name 
-	 *  Phone number
-	 *   Addr street 
-	 *   Addr city 
-	 *   Addr state 
-	 *   Addr zip
-	 */
 
 	TextField fname;
 	TextField lname;
@@ -73,7 +66,19 @@ public class AddDonorWindow {
 		
 		Button okButton = new Button("OK");
 		okButton.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
-//		okButton.setOnAction(new addCallData());
+		okButton.setOnAction(e ->{
+			if(!(fname.getText().isBlank()|| lname.getText().isBlank() || phoneNumber.getText().isBlank() ||
+					streetAddress.getText().isBlank() || city.getText().isBlank() || zip.getText().isBlank())) {
+				try {
+					DonorIO.addDonorData(fname.getText(), lname.getText(), phoneNumber.getText(), 
+							streetAddress.getText(), city.getText(), state.getValue(), zip.getText(), dbconnection);
+				} catch (SQLException e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage());
+				}
+			}else {
+				JOptionPane.showMessageDialog(null, "Please fill in all fields");
+			}
+		});
 		Button backButton = new Button("Back");
 		backButton.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
 		backButton.setOnAction(e -> mainWindow.setScene(mainScene));
