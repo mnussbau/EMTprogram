@@ -65,7 +65,7 @@ public class AddBusWindow {
 			grid.add(price, 1, 6);
 			grid.add(new Label("Branch Name:"), 0, 8);
 			try {
-				BranchData.getBranch().stream().forEach(b -> newBranches.add(b.getBranchName()));
+				BranchData.getBranch(db).stream().forEach(b -> newBranches.add(b.getBranchName()));
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				JOptionPane.showMessageDialog(null, "error getting branches");
@@ -124,8 +124,8 @@ public class AddBusWindow {
 					JOptionPane.showMessageDialog(null, "Please fill in a price.");
 				}
 				else if(branchName.getValue().isBlank()) {
-					String s = (String) JOptionPane.showInputDialog(null, "please choose a symptom.", "Choose a symptom",
-							JOptionPane.PLAIN_MESSAGE, null, branchName.toArray(), "");
+					String s = (String) JOptionPane.showInputDialog(null, "please choose a branch.", "Choose a branch",
+							JOptionPane.PLAIN_MESSAGE, null, branchName.getItems().toArray(), "");
 					if ((s != null) && (s.length() > 0)) {
 						
 						return;

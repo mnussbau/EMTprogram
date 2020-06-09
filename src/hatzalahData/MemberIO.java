@@ -26,7 +26,8 @@ public class MemberIO {
 
 	public static String addMemberData(String fname, String lname, String phoneNum, LocalDate bday,
 			Character maritalStatus, String branchName, LocalDate dateJoined, String credentialName, String jobName,
-			Character status, String street, String city, String state, String zip, Connection dbConnection) throws SQLException {
+			Character status, String street, String city, String state, String zip, Connection dbConnection)
+			throws SQLException {
 		String memberId = "";
 		try {
 			dbConnection.setAutoCommit(false);
@@ -45,8 +46,8 @@ public class MemberIO {
 			cStatement.setString(10, zip);
 			cStatement.setString(11, credentialName);
 			cStatement.setString(12, jobName);
-			cStatement.setString(13,  phoneNum);
-			cStatement.setString(14,  "" + status);
+			cStatement.setString(13, phoneNum);
+			cStatement.setString(14, "" + status);
 			ResultSet rs = cStatement.executeQuery();
 
 			dbConnection.commit();
@@ -59,19 +60,19 @@ public class MemberIO {
 			throw sqlE;
 		}
 		return memberId;
+	}
 
-
-
-	public static List<Member> getMembers(Connection db) throws SQLException{
+	public static List<Member> getMembers(Connection db) throws SQLException {
 		db.setAutoCommit(false);
 		Statement statement = db.createStatement();
 		ResultSet rs = statement.executeQuery("select * from member");
-		List<Member>  members = new ArrayList<>();
+		List<Member> members = new ArrayList<>();
 		while (rs.next()) {
-			Member member = new Member(rs.getString("member_id"),rs.getString("fname"),rs.getString("lname"),
-				rs.getDate("date_joined").toLocalDate(),rs.getDate("bday").toLocalDate(),
-				rs.getString("Marital_status").charAt(0), rs.getInt("branch_id"), rs.getInt("Address_id"),
-				rs.getInt("credential_id"),rs.getInt("job_id"),rs.getString("member_phone_num"),rs.getString("active_status").charAt(0));
+			Member member = new Member(rs.getString("member_id"), rs.getString("fname"), rs.getString("lname"),
+					rs.getDate("date_joined").toLocalDate(), rs.getDate("bday").toLocalDate(),
+					rs.getString("Marital_status").charAt(0), rs.getInt("branch_id"), rs.getInt("Address_id"),
+					rs.getInt("credential_id"), rs.getInt("job_id"), rs.getString("member_phone_num"),
+					rs.getString("active_status").charAt(0));
 			members.add(member);
 		}
 		return members;

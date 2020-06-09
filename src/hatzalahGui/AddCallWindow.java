@@ -213,9 +213,9 @@ public class AddCallWindow extends Stage {
 
 		@Override
 		public void handle(ActionEvent event) {
-			if (branchNameComboBx.getValue().isBlank() || fnameTxtBx.getText().isBlank() || lnameTxtBx.getText().isBlank()
+			if (branchNameComboBx.getValue()==null || fnameTxtBx.getText().isBlank() || lnameTxtBx.getText().isBlank()
 					|| ageTxtBx.getText().isBlank() || streetAddressTxtBx.getText().isBlank()
-					|| cityTxtBx.getText().isBlank() || stateCmBx.getValue().isBlank()
+					|| cityTxtBx.getText().isBlank() || stateCmBx.getValue()==null
 					|| zipTxtBx.getText().isBlank()) {
 				JOptionPane.showMessageDialog(null, "All fields must be filled out.");
 				return;
@@ -302,6 +302,7 @@ public class AddCallWindow extends Stage {
 			List<String> allMembers;
 			Integer branchId;
 			String branchName = branchNameComboBx.getValue();
+			System.out.println(branchName);
 			try {
 				branchNameComboBx.setDisable(true);
 				branchId = BranchData.getBranchId(db, branchName);

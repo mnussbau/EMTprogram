@@ -92,7 +92,7 @@ public class AddMemberWindow extends Stage {
 		grid.add(new Label("Branch Name"), 0, 2);
 		ArrayList<Branch> branches = null;
 		try {
-			branches = BranchData.getBranch();
+			branches = BranchData.getBranch(dbconnection);
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			System.out.println(e1.getMessage());

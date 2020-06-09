@@ -54,7 +54,7 @@ public class AddPurchaseWindow {
 		grid.add(new Label("Branch Name"), 1, 0);
 		
 		try {
-			BranchData.getBranch().stream().forEach(b -> newBranches.add(b.getBranchName()));
+			BranchData.getBranch(db).stream().forEach(b -> newBranches.add(b.getBranchName()));
 		} catch (SQLException e1) {
 			
 			JOptionPane.showMessageDialog(null, "error getting branches");
