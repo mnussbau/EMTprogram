@@ -67,7 +67,7 @@ public class AddBusWindow {
 			try {
 				BranchData.getBranch(db).stream().forEach(b -> newBranches.add(b.getBranchName()));
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
+			
 				JOptionPane.showMessageDialog(null, "error getting branches");
 			}
 			branchName = new ComboBox<String>(FXCollections.observableArrayList(newBranches));
@@ -116,12 +116,14 @@ public class AddBusWindow {
 				
 				
 				
-				try {
+				
 				if(VIN.getText().isBlank()) {
 					JOptionPane.showMessageDialog(null, "Please fill in a VIN.");
+					return;
 				}
 				else if(price.getText().isBlank()) {
 					JOptionPane.showMessageDialog(null, "Please fill in a price.");
+					return;
 				}
 				else if(branchName.getValue().isBlank()) {
 					String s = (String) JOptionPane.showInputDialog(null, "please choose a branch.", "Choose a branch",
@@ -131,30 +133,37 @@ public class AddBusWindow {
 						return;
 					}
 				}
-				else if(VIN.getText().isBlank()) {
-					JOptionPane.showMessageDialog(null, "Please fill in a VIN.");
-				}
-				if(VIN.getText().isBlank()) {
-					JOptionPane.showMessageDialog(null, "Please fill in a VIN.");
-				}
+				try {
 				   BusIO.AddBusData(db, Vin, 
 						   purchase, maintained, p, branch);
 				   JOptionPane.showMessageDialog(null,"Bus added");
+				   ClearInput();
 				}
 				catch (SQLException ex) {
 					System.out.println(ex.getMessage()); 
 					JOptionPane.showMessageDialog(null,"error occurred");
+					ClearInput();
 				}
 				catch (DateTimeParseException ex1) {
 					JOptionPane.showMessageDialog(null, "error - check dates");
+					ClearInput();
 				}
 				catch (Exception ex2) {
 					JOptionPane.showMessageDialog(null, "error occurred");
+					ClearInput();
 				}
 				
 			}
 			
 			
 			
+		}
+		private void ClearInput() {
+			VIN.clear();
+			datePurchased.setValue(LocalDate.now());
+			lastMaintained.setValue(LocalDate.now());
+			price.clear();
+			
+
 		}
 }

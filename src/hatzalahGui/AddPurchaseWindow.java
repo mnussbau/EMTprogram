@@ -27,13 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public class AddPurchaseWindow {
-	/*
-	 * Equipment name 
-	 * Branch name 
-	 * Qty 
-	 * Purchase date (n) 
-	 * price
-	 */
+	
 	private TextField equipmentName;
 	private ComboBox<String> branchName;
 	private TextField qty;
@@ -105,6 +99,26 @@ class AddPurchaseController implements EventHandler<ActionEvent>{
 	}
 	@Override
 	public void handle(ActionEvent event) {
+		if(equipmentName.getText().isBlank()) {
+			JOptionPane.showMessageDialog(null,"Please enter an equipment name.");
+			return;
+		}
+		else if(branchName.getValue().isBlank()) {
+			String s = (String) JOptionPane.showInputDialog(null, "please choose a branch.", "Choose a branch",
+					JOptionPane.PLAIN_MESSAGE, null, branchName.getItems().toArray(), "");
+			if ((s != null) && (s.length() > 0)) {
+				
+				return;
+			}
+		}
+		else if(qty.getText().isBlank()) {
+			JOptionPane.showMessageDialog(null,"Please enter a quantity amount.");
+			return;
+		}
+		else if(price.getText().isBlank()) {
+			JOptionPane.showMessageDialog(null,"Please enter a price.");
+			return;
+		}
 		String equipment = equipmentName.getText();
 		String branch = branchName.getValue();
 		String quantity =qty.getText();
@@ -115,19 +129,28 @@ class AddPurchaseController implements EventHandler<ActionEvent>{
 		   PurchaseIO.AddPurchaseData(db, equipment, branch, quantity,
 				   purchase, p);
 		   JOptionPane.showMessageDialog(null,"Purchase added");
+		   ClearInputs();
 		}
 		catch (SQLException ex) {
 			System.out.println(ex.getMessage()); 
 			JOptionPane.showMessageDialog(null,"error occurred");
+			ClearInputs();
 		}
 		catch (DateTimeParseException ex1) {
 			JOptionPane.showMessageDialog(null, "error - check dates");
+			ClearInputs();
 		}
 		catch (Exception ex2) {
 			JOptionPane.showMessageDialog(null, "error occurred");
+			ClearInputs();
 		}
 		
 	}
 	
 }
+	private void ClearInputs() {
+		equipmentName.clear();
+		qty.clear();
+		purchaseDate.setValue(LocalDate.now());
+	}
 }

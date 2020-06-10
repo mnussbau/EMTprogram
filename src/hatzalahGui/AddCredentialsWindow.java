@@ -62,25 +62,35 @@ public class AddCredentialsWindow {
 			}
 			 @Override
 			 public void handle(ActionEvent event){
-				 
+				 if(credentialName.getText().isBlank()) {
+					 JOptionPane.showMessageDialog(null, "Please fill in a credential.");
+					 return;
+				 }
 				 String cred = credentialName.getText();
+					 
+				 
 				 try {
 					 CredentialIO.AddCredentialData(db, cred);
-					 
+					 ClearInput();
 				 }
 				 catch (SQLException ex) {
 						System.out.println(ex.getMessage()); 
 						JOptionPane.showMessageDialog(null,"error occurred");
+						ClearInput();
 					}
 					catch (DateTimeParseException ex1) {
 						JOptionPane.showMessageDialog(null, "error - check dates");
+						ClearInput();
 					}
 					catch (Exception ex2) {
 						JOptionPane.showMessageDialog(null, "error occurred");
+						ClearInput();
 					}
 			 }
 			
 		}
-
+		private void ClearInput() {
+			credentialName.clear();
+		}
 
 }

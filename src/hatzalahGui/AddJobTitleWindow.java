@@ -24,7 +24,7 @@ public class AddJobTitleWindow {
 		private TextField jobName;
 		Scene mainScene;
 
-		public AddJobTitleWindow(Stage mainWindow, Connection dbconnection) {
+		public AddJobTitleWindow(Stage mainWindow, Connection db) {
 			mainScene = mainWindow.getScene();
 			BorderPane borderLayout = new BorderPane();
 			borderLayout.setPrefSize(300, 100);
@@ -35,7 +35,7 @@ public class AddJobTitleWindow {
 			GridPane.setMargin(jobName,  new Insets(5, 5, 5, 5));
 			Button okButton = new Button("OK");
 			okButton.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
-			//okButton.setOnAction(new AddJobTitleController(dbConnection));
+			okButton.setOnAction(new AddJobTitleController(db));
 			Button backButton = new Button("Back");
 			backButton.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
 			backButton.setOnAction(e -> mainWindow.setScene(mainScene));
@@ -60,25 +60,35 @@ public class AddJobTitleWindow {
 			public AddJobTitleController(Connection db) {
 				this.db = db;
 			}
+			
 			 @Override
 			 public void handle(ActionEvent event){
 				 String job = jobName.getText();
+				 if(jobName.getText().isBlank()) {
+					 JOptionPane.showMessageDialog(null, "Please fill in a value.");
+					 return;
+				 }
 				 try {
 					 JobIO.AddJobData(db, job);
 					 
+					 jobName.clear();
 				 }
 				 catch (SQLException ex) {
-						System.out.println(ex.getMessage()); 
+						
 						JOptionPane.showMessageDialog(null,"error occurred");
+						jobName.clear();
 					}
 					catch (DateTimeParseException ex1) {
 						JOptionPane.showMessageDialog(null, "error - check dates");
+						jobName.clear();
 					}
 					catch (Exception ex2) {
 						JOptionPane.showMessageDialog(null, "error occurred");
+						jobName.clear();
 					}
 			 }
 			
 		}
-
+		
+		
 }
