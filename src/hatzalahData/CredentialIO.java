@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -56,6 +57,19 @@ public static void AddCredentialData(Connection db, String credential) throws SQ
 		}
 		
 		return credentials;
+	}
+	public static String getCredentialName(Connection dbconnection, int credential_id) throws SQLException {
+		String sql = "select cred_desc" + " from Job_Credential where cred_id = ?";
+		PreparedStatement pStatement = dbconnection.prepareStatement(sql);
+		// plug the data into the statement , replacing the placeholder
+		pStatement.setInt(1, credential_id);
+		ResultSet rs = pStatement.executeQuery();
+		String credentialName = null;
+		while (rs.next()) {
+			credentialName = rs.getString("cred_desc");
+		}
+		rs.close();
+		return credentialName;
 	}
 	
 

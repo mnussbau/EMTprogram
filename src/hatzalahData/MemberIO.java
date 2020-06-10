@@ -2,6 +2,7 @@ package hatzalahData;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -71,12 +72,42 @@ public class MemberIO {
 		while (rs.next()) {
 			Member member = new Member(rs.getString("member_id"), rs.getString("fname"), rs.getString("lname"),
 					rs.getDate("date_joined").toLocalDate(), rs.getDate("bday").toLocalDate(),
-					rs.getString("Marital_status").charAt(0), rs.getInt("branch_id"), rs.getInt("Address_id"),
+					rs.getString("marital_status").charAt(0), rs.getInt("branch_id"), rs.getInt("Address_id"),
 					rs.getInt("credential_id"), rs.getInt("job_id"), rs.getString("member_phone_num"),
 					rs.getString("active_status").charAt(0));
 			members.add(member);
 		}
 		return members;
+
+	}
+
+	public static Member getMember(String memberId, Connection db) throws SQLException {
+
+		String info = " Organization Info: ";
+		String sql = "select member_id, fname, lname, date_joined, bday, marital_status, branch_id"
+				+ ", address_id, credential_id, job_id, member_phone_num, active_status"
+				+ " from Member where member_id = ?";
+		/*--member_id, fname, lname, date_joined, bday, marital_status, 
+		 * branch_id, address_id, credential_id, job_id, member_phone_num, active_status
+		 */
+		PreparedStatement pStatement;
+		Member member = null;
+		pStatement = db.prepareStatement(sql);
+		// plug the data into the statement , replacing the placeholder
+		pStatement.setString(1, memberId);
+		ResultSet rs = pStatement.executeQuery();
+		while (rs.next()) {
+			member = new Member(rs.getString("member_id"), rs.getString("fname"), rs.getString("lname"),
+					rs.getDate("date_joined").toLocalDate(), rs.getDate("bday").toLocalDate(),
+					rs.getString("marital_Status").charAt(0), rs.getInt("branch_id"), rs.getInt("address_id"),
+					rs.getInt("credential_id"), rs.getInt("job_id"), rs.getString("member_phone_num"),
+					rs.getString("active_status").charAt(0));
+		}
+		rs.close();
+		if (member == null) {
+			throw new SQLException("You entered an invalid id");
+		}
+		return member;
 
 	}
 
