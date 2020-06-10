@@ -111,4 +111,23 @@ public class MemberIO {
 
 	}
 
+	public static int getMemberCount(int branchId, Connection dbconnection) throws SQLException {
+
+		try {
+			PreparedStatement pStatement;
+			String sql = "select count(member_id) as memberCount from Member where branch_id = ?";
+			pStatement = dbconnection.prepareStatement(sql);
+			pStatement.setInt(1, branchId);
+			ResultSet rs = pStatement.executeQuery();
+			int count = 0;
+			while (rs.next()) {
+				count = rs.getInt("memberCount");
+			}
+			return count;
+		} catch (SQLException sqlE) {
+			dbconnection.rollback();
+			throw sqlE;
+		}
+	}
+
 }
