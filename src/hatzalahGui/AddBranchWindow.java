@@ -92,7 +92,7 @@ public class AddBranchWindow extends Stage {
 			try {
 				BranchData.addBranch(dbConnection, branchName, yearEst, initial);
 				branchNameTxtBx.clear();
-				JOptionPane.showMessageDialog(null, "Record Added");
+				JOptionPane.showMessageDialog(null, "Branch Added.");
 			} catch (SQLException ex) {
 				JOptionPane.showMessageDialog(null, "error occurred - " + ex.getMessage());
 			}
