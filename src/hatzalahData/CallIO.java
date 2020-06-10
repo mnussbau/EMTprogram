@@ -2,6 +2,7 @@ package hatzalahData;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -28,11 +29,11 @@ public class CallIO {
 			cs.setString(7, lname);
 			cs.setInt(8, age);
 			cs.setString(9, transfered + "");
-			if( (vin == null || vin.isBlank()) && transfered == 'N') {
+			if ((vin == null || vin.isBlank()) && transfered == 'N') {
 				cs.setNull(10, Types.NULL);
-			}else if((vin == null || vin.isBlank()) && transfered == 'Y') {
+			} else if ((vin == null || vin.isBlank()) && transfered == 'Y') {
 				throw new RuntimeException("Vin cannot be blank if the patient was transfered.");
-			}else {
+			} else {
 				cs.setString(10, vin);
 			}
 			cs.setDate(11, java.sql.Date.valueOf(callReceived));
@@ -71,14 +72,13 @@ public class CallIO {
 
 	private static void addSymptomToCall(Connection db, int callId, String symptom) throws SQLException {
 		db.setAutoCommit(false);
-		
+
 		String sql = "{call usp_AddSymptomsToCall(?,?)}";
 		CallableStatement cs = db.prepareCall(sql);
 		cs.setInt(1, callId);
 		cs.setString(2, symptom);
 		cs.execute();
 		cs.getMoreResults();
-
 
 	}
 
@@ -91,7 +91,6 @@ public class CallIO {
 		cs.execute();
 		cs.getMoreResults();
 
-
 	}
 
 	private static void addEquipmentToCall(Connection db, int callId, String equipment) throws SQLException {
@@ -102,6 +101,26 @@ public class CallIO {
 		cs.execute();
 		cs.getMoreResults();
 
+	}
+
+	public static int getAverageCalls(int branchId, Connection dbconnection) throws SQLException {
+
+		String sql = "select avg(averagecount) as averageCall from (select count(call_id) as averageCount from Help_Call"
+				+ " where branch_id = ? group by year(call_received)) as average";
+		PreparedStatement ps;
+		try {
+			ps = dbconnection.prepareStatement(sql);
+
+			ps.setInt(1, branchId);
+			ResultSet rs = ps.executeQuery();
+			int average = 0;
+			while (rs.next()) {
+				average = rs.getInt("averageCall");
+			}
+			return average;
+		} catch (SQLException e) {
+			throw e;
+		}
 	}
 
 }

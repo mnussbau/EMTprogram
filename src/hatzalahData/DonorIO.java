@@ -2,6 +2,7 @@ package hatzalahData;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -95,6 +96,28 @@ public class DonorIO {
 
 		} catch (SQLException e) {
 			db.rollback();
+			throw e;
+		}
+
+	}
+
+	public static int getDonorCount(int branchId, Connection dbconnection) throws SQLException {
+
+		String sql = "select count(names) as DonorCount from (select distinct Donor.donor_id as Names from Donor "
+				+ "inner join Donation on Donor.donor_id = Donation.donor_id where branch_id = ?) as Donors";
+		PreparedStatement ps;
+		try {
+			ps = dbconnection.prepareStatement(sql);
+
+			ps.setInt(1, branchId);
+			ResultSet rs = ps.executeQuery();
+			int count = 0;
+			while (rs.next()) {
+				count = rs.getInt("DonorCount");
+			}
+			return count;
+
+		} catch (SQLException e) {
 			throw e;
 		}
 
