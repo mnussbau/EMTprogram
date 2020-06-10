@@ -3,7 +3,10 @@ package hatzalahGui;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
 
 import hatzalahBusiness.Branch;
 import hatzalahData.BranchData;
@@ -26,8 +29,12 @@ public class MainClass extends Application {
 
 	@Override
 	public void start(Stage mainWindow) throws Exception {
+
 		String url = "jdbc:sqlserver://localhost:1433;instance=SQLEXPRESS;databaseName=Hatzolah;integratedSecurity=true";
 		dbconnection = DriverManager.getConnection(url);
+		if (dbconnection == null) {
+			JOptionPane.showMessageDialog(null, "Could not connect to database");
+		}
 		dbconnection.setAutoCommit(false);
 		mainWindow.setHeight(500);
 		mainWindow.setWidth(600);
@@ -41,7 +48,7 @@ public class MainClass extends Application {
 
 		MenuItem addBranchMenuItem = new MenuItem("Branch");
 		addBranchMenuItem.setOnAction(e -> {
-			new AddBranchWindow(mainWindow,dbconnection);
+			new AddBranchWindow(mainWindow, dbconnection);
 		});
 		MenuItem addBusMenuItem = new MenuItem("Bus");
 		addBusMenuItem.setOnAction(e -> {
@@ -49,7 +56,7 @@ public class MainClass extends Application {
 		});
 		MenuItem addCallMenuItem = new MenuItem("Call");
 		addCallMenuItem.setOnAction(e -> {
-			new AddCallWindow(mainWindow,dbconnection);
+			new AddCallWindow(mainWindow, dbconnection);
 		});
 		MenuItem addCredentialsMenuItem = new MenuItem("Credential");
 		addCredentialsMenuItem.setOnAction(e -> {
@@ -64,8 +71,8 @@ public class MainClass extends Application {
 			new AddDonorWindow(mainWindow, dbconnection);
 		});
 		MenuItem addEqupmentMenuItem = new MenuItem("Equpment");
-		addEqupmentMenuItem.setOnAction(e-> {
-			new AddEquipmentWindow(mainWindow,dbconnection);
+		addEqupmentMenuItem.setOnAction(e -> {
+			new AddEquipmentWindow(mainWindow, dbconnection);
 		});
 		MenuItem addJobTitleMenuItem = new MenuItem("Job Title");
 		addJobTitleMenuItem.setOnAction(e -> {
@@ -84,16 +91,16 @@ public class MainClass extends Application {
 			new AddSymptomWindow(mainWindow, dbconnection);
 		});
 		addMenu.getItems().addAll(addBranchMenuItem, addBusMenuItem, addCallMenuItem, addCredentialsMenuItem,
-				addDonationMenuItem, addDonorMenuItem,addEqupmentMenuItem, addJobTitleMenuItem, addMemberMenuItem,
+				addDonationMenuItem, addDonorMenuItem, addEqupmentMenuItem, addJobTitleMenuItem, addMemberMenuItem,
 				addPurchaseEquipmentMenuItem, addSymptomMenuItem);
 
 		MenuItem updateBusInfoMenuItem = new MenuItem("Bus Info");
 		updateBusInfoMenuItem.setOnAction(e -> {
-			new UpdateBusWindow();
+			new UpdateBusWindow(mainWindow, dbconnection);
 		});
 		MenuItem updateDonorInfoMenuItem = new MenuItem("Donor Info");
 		updateDonorInfoMenuItem.setOnAction(e -> {
-			new UpdateDonorWindow();
+			new UpdateDonorWindow(mainWindow, dbconnection);
 		});
 		MenuItem memberInfoMenuItem = new MenuItem("Member Info");
 		memberInfoMenuItem.setOnAction(e -> {
