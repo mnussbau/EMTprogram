@@ -244,8 +244,12 @@ public class AddCallWindow extends Stage {
 			try {
 				CallIO.addCall(db, branchName, callReceived, fname, lname, age, addrStreet, addrCity, addrState, zip,
 						transfered, vin, notes, symptoms, members, equipment);
+				JOptionPane.showMessageDialog(null, "Call Succesfully added.");
+				clearInputs();
+			
 			} catch (SQLException sqlE) {
 				JOptionPane.showMessageDialog(null, "A problem occurred: " + sqlE.getMessage());
+				clearInputs();
 			}
 		}
 
@@ -351,5 +355,18 @@ public class AddCallWindow extends Stage {
 				return;
 			}
 		}
+		
+	}
+	private void clearInputs() {
+		branchNameComboBx.setValue(getTitle());
+		streetAddressTxtBx.clear();
+		stateCmBx.setValue(getTitle());
+		cityTxtBx.clear();
+		zipTxtBx.clear();
+		fnameTxtBx.clear();
+		lnameTxtBx.clear();
+		ageTxtBx.clear();
+		VINtxtBx.clear();
+		notesTxtArea.clear();
 	}
 }
