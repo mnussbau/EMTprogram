@@ -92,11 +92,6 @@ public class UpdateMemberWindow {
 		
 		String idLabel = "Please enter your id";
 		String input = JOptionPane.showInputDialog(null, idLabel);  
-		if(input == null) {
-			System.out.println("canceled");
-			
-			mainWindow.setScene(originalScene);
-		}
 		
 		try {
 			Member memberToUpdate = MemberIO.getMember(input, dbconnection);
@@ -134,6 +129,7 @@ public class UpdateMemberWindow {
 			branchName = new ComboBox<String>(FXCollections.observableArrayList(BranchData.getBranch(dbconnection).stream().map(b->b.getBranchName()).collect(Collectors.toList())));
 			branchName.setValue(BranchData.getBranchName(dbconnection, memberToUpdate.getBranch_id()));
 			branchName.setMaxWidth(150);
+			branchName.setDisable(true);
 			grid.add(branchName, 0, 3);
 			grid.add(new Label("Date Joined"), 1, 2);
 			dateJoined = new TextField();
@@ -223,12 +219,11 @@ public class UpdateMemberWindow {
 			mainWindow.sizeToScene();
 			
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			if(input != null)
+				JOptionPane.showMessageDialog(null, e.getMessage());
 			mainWindow.setScene(originalScene);
-		}
-
-		System.out.println(input);
-		
+		} 
+			
 		
 		
 		
