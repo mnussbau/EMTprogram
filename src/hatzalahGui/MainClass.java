@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -12,11 +13,13 @@ import hatzalahBusiness.Branch;
 import hatzalahData.BranchData;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -44,7 +47,7 @@ public class MainClass extends Application {
 
 		Menu addMenu = new Menu("Add");
 		Menu updateMenu = new Menu("Update");
-		Menu viewMenu = new Menu("View");
+		Menu viewMenu = new Menu("Branch Info");
 
 		MenuItem addBranchMenuItem = new MenuItem("Branch");
 		addBranchMenuItem.setOnAction(e -> {
@@ -108,17 +111,6 @@ public class MainClass extends Application {
 		});
 		updateMenu.getItems().addAll(updateBusInfoMenuItem, updateDonorInfoMenuItem, memberInfoMenuItem);
 
-		ArrayList<Branch> branches = BranchData.getBranch(dbconnection);
-		for (int i = 0; i < branches.size(); i++) {
-			int x = i;
-			MenuItem branchItem = new MenuItem(branches.get(i).getBranchName());
-			branchItem.setOnAction(e -> {
-				new ViewBranchWindow(branches.get(x), mainWindow);
-
-			});
-			viewMenu.getItems().add(branchItem);
-		}
-
 		MenuBar theMenuBar = new MenuBar();
 		theMenuBar.setStyle("-fx-background-color: Lavender");
 		theMenuBar.getMenus().addAll(addMenu, updateMenu, viewMenu);
@@ -132,6 +124,21 @@ public class MainClass extends Application {
 		mainWindow.setScene(theScene);
 		mainWindow.sizeToScene();
 		mainWindow.show();
+		
+		
+		theMenuBar.setOnMouseEntered(d -> {
+			try {
+				viewMenu.getItems().clear();
+				BranchData.getBranch(dbconnection).forEach(branch -> {
+					MenuItem i = new MenuItem(branch.getBranchName());
+					i.setOnAction(e -> new ViewBranchWindow(branch, mainWindow, dbconnection));
+					viewMenu.getItems().add(i);
+				});
+				
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(null, "error occurred - " + e.getMessage());
+			}
+		});
 
 	}
 

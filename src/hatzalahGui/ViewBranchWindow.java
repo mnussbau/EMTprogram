@@ -1,6 +1,8 @@
 package hatzalahGui;
 
 
+import java.sql.Connection;
+
 import hatzalahBusiness.Branch;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -10,7 +12,7 @@ import javafx.stage.Stage;
 
 public class ViewBranchWindow {
 	
-	public ViewBranchWindow(Branch b, Stage mainWindow) {
+	public ViewBranchWindow(Branch b, Stage mainWindow, Connection db) {
 		Scene originalScene = mainWindow.getScene();
 		
 		GridPane gp = new GridPane();
