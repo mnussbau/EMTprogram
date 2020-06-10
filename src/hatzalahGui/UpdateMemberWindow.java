@@ -103,6 +103,7 @@ public class UpdateMemberWindow {
 			grid.add(new Label("First Name"), 1, 0);
 			fname = new TextField();
 			fname.setText(memberToUpdate.getFname());
+			fname.setDisable(true);
 			grid.add(fname, 1, 1);
 			grid.add(new Label("Last Name"), 2, 0);
 			lname = new TextField();
