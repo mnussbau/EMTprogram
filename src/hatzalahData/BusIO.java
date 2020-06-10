@@ -33,5 +33,20 @@ public class BusIO {
 			throw ex1;
 		}
 	}
+	
+	public static void UpdateBusData(Connection db,String vin, LocalDate lastMaintained) throws SQLException{
+		try {
+			db.setAutoCommit(false);
+			CallableStatement stmt = db.prepareCall("{call usp_UpdateBus(?,?)}");
+			stmt.setString(1, vin);
+			stmt.setDate(2, java.sql.Date.valueOf(lastMaintained));//Maintained 
+			stmt.execute();
+			stmt.getMoreResults();
+			db.commit();
+		}catch(SQLException e) {
+			db.rollback();
+			throw e;
+		}
+	}
 
 }

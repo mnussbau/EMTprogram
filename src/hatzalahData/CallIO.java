@@ -28,15 +28,15 @@ public class CallIO {
 			cs.setString(7, lname);
 			cs.setInt(8, age);
 			cs.setString(9, transfered + "");
-			if(vin.isBlank() && transfered == 'N') {
+			if( (vin == null || vin.isBlank()) && transfered == 'N') {
 				cs.setNull(10, Types.NULL);
-			}else if(vin.isBlank() && transfered == 'Y') {
+			}else if((vin == null || vin.isBlank()) && transfered == 'Y') {
 				throw new RuntimeException("Vin cannot be blank if the patient was transfered.");
 			}else {
 				cs.setString(10, vin);
 			}
 			cs.setDate(11, java.sql.Date.valueOf(callReceived));
-			if (notes.isBlank()) {
+			if (notes == null || notes.isBlank()) {
 				cs.setNull(12, Types.NULL);
 			} else {
 				cs.setString(12, notes);

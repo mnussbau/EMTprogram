@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
+import hatzalahBusiness.Equipment;
+import hatzalahBusiness.Member;
 import hatzalahBusiness.Symptom;
 import hatzalahData.BranchData;
 import hatzalahData.CallIO;
@@ -69,7 +71,8 @@ public class AddCallWindow extends Stage {
 		GridPane grid = new GridPane();
 		grid.add(new Label("Branch Name:"), 0, 0);
 		try {
-			branchNameComboBx = new ComboBox<>(FXCollections.observableArrayList(BranchData.getBranch(dbConnection).stream().map(b->b.getBranchName()).collect(Collectors.toList())));
+			branchNameComboBx = new ComboBox<>(FXCollections.observableArrayList(BranchData.getBranch(dbConnection)
+					.stream().map(b -> b.getBranchName()).collect(Collectors.toList())));
 		} catch (SQLException e1) {
 			JOptionPane.showMessageDialog(null, "Cannot connect to database.");
 			mainWindow.setScene(mainScene);
@@ -180,25 +183,10 @@ public class AddCallWindow extends Stage {
 
 	class addCallData implements EventHandler<ActionEvent> {
 		Connection db;
-		String branchName;
-		LocalDate callReceived;
-		String fname;
-		String lname;
-		int age;
-		String addrStreet;
-		String addrCity;
-		String addrState;
-		String zip;
-		char transfered;
-		String vin;
-		String notes;
-		List<String> symptoms;
-		List<String> members;
-		List<String> equipment;
 
 		public addCallData(Connection db) {
 			this.db = db;
-			
+
 		}
 
 		private boolean canParseInt(String number) {
@@ -211,42 +199,48 @@ public class AddCallWindow extends Stage {
 
 		}
 
+		private boolean dataHasBlanks() {
+			return branchNameComboBx.getValue() == null || fnameTxtBx.getText().isBlank() || lnameTxtBx.getText().isBlank()
+					|| ageTxtBx.getText().isBlank() || streetAddressTxtBx.getText().isBlank()
+					|| cityTxtBx.getText().isBlank() || stateCmBx.getValue() == null || zipTxtBx.getText().isBlank();
+		}
 		@Override
 		public void handle(ActionEvent event) {
-			if (branchNameComboBx.getValue()==null || fnameTxtBx.getText().isBlank() || lnameTxtBx.getText().isBlank()
-					|| ageTxtBx.getText().isBlank() || streetAddressTxtBx.getText().isBlank()
-					|| cityTxtBx.getText().isBlank() || stateCmBx.getValue()==null
-					|| zipTxtBx.getText().isBlank()) {
+			if (dataHasBlanks()) {
 				JOptionPane.showMessageDialog(null, "All fields must be filled out.");
 				return;
 			}
-			if(transferedCmboBx.getValue() == 'Y' && VINtxtBx.getText().isBlank()) {
+			if (transferedCmboBx.getValue() == 'Y' && VINtxtBx.getText().isBlank()) {
 				JOptionPane.showMessageDialog(null, "Vin cannot be blank if the patient was transfered.");
 				return;
 			}
-			branchName = branchNameComboBx.getValue();
-			callReceived = dateOfCallDtPckr.getValue();
-			fname = fnameTxtBx.getText();
-			lname = lnameTxtBx.getText();
+			if(transferedCmboBx.getValue() =='N') {
+				VINtxtBx.clear();
+			}
+			
+			String branchName = branchNameComboBx.getValue();
+			LocalDate callReceived = dateOfCallDtPckr.getValue();
+			String fname = fnameTxtBx.getText();
+			String lname = lnameTxtBx.getText();
 			if (!canParseInt(ageTxtBx.getText())) {
 				JOptionPane.showMessageDialog(null, "Age must be a number.");
 				return;
 			}
-			age = Integer.parseInt(ageTxtBx.getText());
-			addrStreet = streetAddressTxtBx.getText();
-			addrCity = cityTxtBx.getText();
-			addrState = stateCmBx.getValue();
+			int age = Integer.parseInt(ageTxtBx.getText());
+			String addrStreet = streetAddressTxtBx.getText();
+			String addrCity = cityTxtBx.getText();
+			String addrState = stateCmBx.getValue();
 			if (zipTxtBx.getText().length() != 5 || !canParseInt(zipTxtBx.getText())) {
 				JOptionPane.showMessageDialog(null, "Please check the zipcode");
 				return;
 			}
-			zip = zipTxtBx.getText();
-			transfered = transferedCmboBx.getValue();
-			vin = VINtxtBx.getText();
-			notes = notesTxtArea.getText();
-			symptoms = symptomsView.getItems();
-			members = membersView.getItems();
-			equipment = equipmentView.getItems();
+			String zip = zipTxtBx.getText();
+			char transfered = transferedCmboBx.getValue();
+			String vin = VINtxtBx.getText();
+			String notes = notesTxtArea.getText();
+			List<String> symptoms = symptomsView.getItems();
+			List<String> members = membersView.getItems();
+			List<String> equipment = equipmentView.getItems();
 			try {
 				CallIO.addCall(db, branchName, callReceived, fname, lname, age, addrStreet, addrCity, addrState, zip,
 						transfered, vin, notes, symptoms, members, equipment);
@@ -306,12 +300,14 @@ public class AddCallWindow extends Stage {
 			try {
 				branchNameComboBx.setDisable(true);
 				branchId = BranchData.getBranchId(db, branchName);
-				if(branchId == null) {
+				if (branchId == null) {
 					JOptionPane.showMessageDialog(null, "Please choose a branch name before adding members.");
 					branchNameComboBx.setDisable(false);
 					return;
 				}
-				allMembers = MemberIO.getMembers(db).stream().filter(m -> m.getBranch_id()==branchId).map(m->m.getMemberId()+": "+m.getFname()+" "+m.getLname()).collect(Collectors.toList());
+				allMembers = MemberIO.getMembers(db).stream().filter(m -> m.getBranch_id() == branchId)
+						.map(m -> m.getMemberId() + ": " + m.getFname() + " " + m.getLname())
+						.collect(Collectors.toList());
 			} catch (SQLException ex) {
 				JOptionPane.showMessageDialog(null, "Something went wrong." + ex.getMessage());
 				branchNameComboBx.setDisable(false);
@@ -341,7 +337,8 @@ public class AddCallWindow extends Stage {
 		public void handle(ActionEvent arg0) {
 			List<String> allEquipment;
 			try {
-				allEquipment =EquipmentIO.getEquipment(db).stream().map(e->e.getEquip_desc()).collect(Collectors.toList());
+				allEquipment = EquipmentIO.getEquipment(db).stream().map(e -> e.getEquip_desc())
+						.collect(Collectors.toList());
 			} catch (SQLException ex) {
 				JOptionPane.showMessageDialog(null, "Something went wrong." + ex.getMessage());
 				return;
