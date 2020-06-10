@@ -24,7 +24,7 @@ public class AddCredentialsWindow {
 		private TextField credentialName;
 		Scene mainScene;
 
-		public AddCredentialsWindow(Stage mainWindow, Connection dbconnection) {
+		public AddCredentialsWindow(Stage mainWindow, Connection db) {
 			mainScene = mainWindow.getScene();
 			BorderPane borderLayout = new BorderPane();
 			borderLayout.setPrefSize(300, 100);
@@ -35,7 +35,7 @@ public class AddCredentialsWindow {
 			GridPane.setMargin(credentialName,  new Insets(5, 5, 5, 5));
 			Button okButton = new Button("OK");
 			okButton.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
-			//okButton.setOnAction(new AddController(dbConnection));
+			okButton.setOnAction(new AddCredentialController(db));
 			Button backButton = new Button("Back");
 			backButton.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
 			backButton.setOnAction(e -> mainWindow.setScene(mainScene));
