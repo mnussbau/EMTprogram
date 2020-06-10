@@ -2,6 +2,7 @@ package hatzalahData;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -49,5 +50,19 @@ public class JobIO {
 		}
 
 		return jobs;
+	}
+
+	public static String getJobName(Connection dbconnection, int job_id) throws SQLException {
+		String sql = "select job_desc" + " from Job where job_id = ?";
+		PreparedStatement pStatement = dbconnection.prepareStatement(sql);
+		// plug the data into the statement , replacing the placeholder
+		pStatement.setInt(1, job_id);
+		ResultSet rs = pStatement.executeQuery();
+		String jobName = null;
+		while (rs.next()) {
+			jobName = rs.getString("job_desc");
+		}
+		rs.close();
+		return jobName;
 	}
 }

@@ -97,7 +97,7 @@ public class MainClass extends Application {
 		});
 		MenuItem memberInfoMenuItem = new MenuItem("Member Info");
 		memberInfoMenuItem.setOnAction(e -> {
-			new UpdateMemberWindow();
+			new UpdateMemberWindow(mainWindow, dbconnection);
 		});
 		updateMenu.getItems().addAll(updateBusInfoMenuItem, updateDonorInfoMenuItem, memberInfoMenuItem);
 
