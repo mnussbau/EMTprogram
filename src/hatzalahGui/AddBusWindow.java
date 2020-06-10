@@ -59,6 +59,14 @@ public class AddBusWindow {
 			grid.add(datePurchased, 1, 2);
 			grid.add(new Label("Last Maintained:"), 0, 4);
 			lastMaintained = new DatePicker();
+			lastMaintained.setValue(LocalDate.now());
+			lastMaintained.setDayCellFactory(picker -> new DateCell() {
+				public void updateItem(LocalDate date, boolean empty) {
+					super.updateItem(date, empty);
+					LocalDate today = LocalDate.now();
+					setDisable(empty || date.compareTo(today) > 0);
+				}
+			});
 			grid.add(lastMaintained, 1, 4);
 			grid.add(new Label("Price:"), 0, 6);
 			price = new TextField();
