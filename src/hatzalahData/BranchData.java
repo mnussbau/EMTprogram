@@ -21,7 +21,7 @@ public class BranchData {
 			ResultSet rs = statement.executeQuery("select * from branch");
 
 			while (rs.next()) {
-				Branch branch = new Branch(rs.getInt("branch_id"), rs.getString("branch_name"), rs.getInt("year_est"));
+				Branch branch = new Branch(rs.getInt("branch_id"), rs.getString("branch_name"), rs.getInt("year_est"), rs.getString("branch_initial"));
 				branches.add(branch);
 			}
 			rs.close();

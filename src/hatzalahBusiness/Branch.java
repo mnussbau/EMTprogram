@@ -7,12 +7,22 @@ public class Branch {
 	private int branchId;
 	private String branchName;
 	private int yearEstablished;
-	public Branch(int i, String string, int j) {
+	private String branchInitial;
+	public Branch(int i, String string, int j, String initial) {
 		super();
 		this.branchId = i;
 		this.branchName = string;
 		this.yearEstablished = j;
+		this.branchInitial = initial;
 	}
+	
+	public void setBranchInitial(String initial) {
+		this.branchInitial = initial;
+	}
+	public String getBranchInitial() {
+		return branchInitial;
+	}
+	
 	public int getBranchId() {
 		return branchId;
 	}
