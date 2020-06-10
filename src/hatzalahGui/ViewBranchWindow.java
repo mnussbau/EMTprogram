@@ -1,8 +1,16 @@
 package hatzalahGui;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+
+import javax.swing.JOptionPane;
 
 import hatzalahBusiness.Branch;
+import hatzalahData.BusIO;
+import hatzalahData.CallIO;
+import hatzalahData.DonationIO;
+import hatzalahData.DonorIO;
+import hatzalahData.MemberIO;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -47,17 +55,52 @@ public class ViewBranchWindow {
 		grid.setHgap(4.0);
 		borderLayout.setTop(grid);
 
-		Label membercount = new Label("4");
+		Label membercount = new Label("Unavailable");
+		try {
+			membercount.setText("" + MemberIO.getMemberCount(b.getBranchId(), dbConnection));
+		
 		membercount.setStyle("-fx-border-color:Lavender; -fx-padding:3px;");
-		Label busCount = new Label("4");
-		busCount.setStyle("-fx-border-color:Lavender; -fx-padding:3px;");
-		Label avgCall = new Label("4");
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, e1.getMessage());
+		}
+		Label busCount = new Label("Unavailable");
+		try {
+			busCount.setText("" + BusIO.getBusCount(b.getBranchId(), dbConnection));
+			busCount.setStyle("-fx-border-color:Lavender; -fx-padding:3px;");
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, e1.getMessage());
+		}
+		
+		Label avgCall = new Label("Unavailable");
+		try {
+			avgCall.setText("" + CallIO.getAverageCalls(b.getBranchId(), dbConnection));
+		
 		avgCall.setStyle("-fx-border-color:Lavender; -fx-padding:3px;");
-		Label donationCount = new Label("4");
-		donationCount.setStyle("-fx-border-color:Lavender; -fx-padding:3px;");
-		Label donorCount = new Label("4");
-		donorCount.setStyle("-fx-border-color:Lavender; -fx-padding:3px;");
-		Label totalDonation = new Label("4");
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, "couldn't find average");
+		}
+		Label donationCount = new Label("Unavailable");
+		try {
+			donationCount.setText("" + DonationIO.getDonationAmount(b.getBranchId(), dbConnection));
+			donationCount.setStyle("-fx-border-color:Lavender; -fx-padding:3px;");
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, "couldn't find Donation Count");
+		}
+		
+		Label donorCount = new Label("Unavailable");
+		try {
+			donorCount.setText("" + DonorIO.getDonorCount(b.getBranchId(), dbConnection));
+			donorCount.setStyle("-fx-border-color:Lavender; -fx-padding:3px;");
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, "couldn't find donor count");
+		}
+		
+		Label totalDonation = new Label("Unavailable");
+		try {
+			totalDonation.setText("" + DonationIO.getDonationTotals(b.getBranchId(), dbConnection));
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, "couldn't find the Donation Totals");
+		}
 		totalDonation.setStyle("-fx-border-color:Lavender; -fx-padding:3px;");
 
 		Button backButton = new Button("Back");
