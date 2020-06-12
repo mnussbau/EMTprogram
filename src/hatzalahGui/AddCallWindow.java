@@ -243,7 +243,7 @@ public class AddCallWindow extends Stage {
 			String vin = VINtxtBx.getText();
 			String notes = notesTxtArea.getText();
 			List<String> symptoms = symptomsView.getItems();
-			List<String> members = membersView.getItems();
+			List<String> members = membersView.getItems().stream().map(m-> m = m.split(":")[0]).collect(Collectors.toList());
 			List<String> equipment = equipmentView.getItems();
 			try {
 				CallIO.addCall(db, branchName, callReceived, fname, lname, age, addrStreet, addrCity, addrState, zip,
@@ -277,7 +277,7 @@ public class AddCallWindow extends Stage {
 				allSymptoms = SymptomIO.getSymptoms(dbConnection).stream().map(s -> s.getSymptomDesc())
 						.collect(Collectors.toList());
 			} catch (SQLException ex) {
-				JOptionPane.showMessageDialog(null, "Something went wrong." + ex.getMessage());
+				JOptionPane.showMessageDialog(null, "Something went wrong getting the symptom data.");
 				return;
 			}
 
@@ -306,7 +306,6 @@ public class AddCallWindow extends Stage {
 			List<String> allMembers;
 			Integer branchId;
 			String branchName = branchNameComboBx.getValue();
-			System.out.println(branchName);
 			try {
 				branchNameComboBx.setDisable(true);
 				branchId = BranchData.getBranchId(db, branchName);
@@ -319,7 +318,7 @@ public class AddCallWindow extends Stage {
 						.map(m -> m.getMemberId() + ": " + m.getFname() + " " + m.getLname())
 						.collect(Collectors.toList());
 			} catch (SQLException ex) {
-				JOptionPane.showMessageDialog(null, "Something went wrong." + ex.getMessage());
+				JOptionPane.showMessageDialog(null, "Something went wrong getting the member data.");
 				branchNameComboBx.setDisable(false);
 				return;
 			}
@@ -350,12 +349,12 @@ public class AddCallWindow extends Stage {
 				allEquipment = EquipmentIO.getEquipment(db).stream().map(e -> e.getEquip_desc())
 						.collect(Collectors.toList());
 			} catch (SQLException ex) {
-				JOptionPane.showMessageDialog(null, "Something went wrong." + ex.getMessage());
+				JOptionPane.showMessageDialog(null, "Something went wrong getting the equipment data.");
 				return;
 			}
 			currentEquipment.forEach(m -> allEquipment.remove(m));
 			String s = (String) JOptionPane.showInputDialog(null, "please choose an equipment.", "Choose an equipment",
-					JOptionPane.PLAIN_MESSAGE, null, currentEquipment.toArray(), "");
+					JOptionPane.PLAIN_MESSAGE, null, allEquipment.toArray(), "");
 			if ((s != null) && (s.length() > 0)) {
 				equipmentView.getItems().add(s);
 				return;
@@ -374,5 +373,8 @@ public class AddCallWindow extends Stage {
 		ageTxtBx.clear();
 		VINtxtBx.clear();
 		notesTxtArea.clear();
+		symptomsView.getItems().clear();
+		membersView.getItems().clear();
+		equipmentView.getItems().clear();
 	}
 }
