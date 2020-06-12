@@ -38,7 +38,7 @@ public class DonationIO {
 
 			ps.setInt(1, branchId);
 			ResultSet rs = ps.executeQuery();
-			double totals = 0.0;
+			double totals = 0;
 			while (rs.next()) {
 				totals += rs.getDouble("DonationTotal");
 
