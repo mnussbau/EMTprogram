@@ -79,7 +79,7 @@ public class UpdateBusWindow extends Stage {
 				vinTxtBx.clear();
 				pickerDate.setValue(LocalDate.now());
 			} catch (SQLException e) {
-				JOptionPane.showMessageDialog(null,  "error occurred - "+ e.getMessage());			
+				JOptionPane.showMessageDialog(null,  "couldn't update the bus");			
 			}
 
 		}

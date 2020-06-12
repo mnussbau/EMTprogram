@@ -84,7 +84,7 @@ public class AddDonationWindow {
 					JOptionPane.showMessageDialog(null, "You successfully made a donation!");
 					clearInputs();
 				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(null, e1.getMessage());
+					JOptionPane.showMessageDialog(null, "couldn't add donation");
 				}
 			}else {
 				JOptionPane.showMessageDialog(null, "Please fill in all fields");

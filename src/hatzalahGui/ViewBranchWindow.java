@@ -61,14 +61,14 @@ public class ViewBranchWindow {
 		
 		membercount.setStyle("-fx-border-color:Lavender; -fx-padding:3px;");
 		} catch (SQLException e1) {
-			JOptionPane.showMessageDialog(null, e1.getMessage());
+			JOptionPane.showMessageDialog(null, "couldn't get member count");
 		}
 		Label busCount = new Label("Unavailable");
 		try {
 			busCount.setText("" + BusIO.getBusCount(b.getBranchId(), dbConnection));
 			busCount.setStyle("-fx-border-color:Lavender; -fx-padding:3px;");
 		} catch (SQLException e1) {
-			JOptionPane.showMessageDialog(null, e1.getMessage());
+			JOptionPane.showMessageDialog(null,"couldn't get bus count");
 		}
 		
 		Label avgCall = new Label("Unavailable");
