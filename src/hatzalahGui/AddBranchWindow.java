@@ -96,7 +96,7 @@ public class AddBranchWindow extends Stage {
 				initialTxtBx.clear();
 				JOptionPane.showMessageDialog(null, "Branch Added.");
 			} catch (SQLException ex) {
-				JOptionPane.showMessageDialog(null, "error occurred - " + ex.getMessage());
+				JOptionPane.showMessageDialog(null, "couldn't add branch");
 			}
 
 		}

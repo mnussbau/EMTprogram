@@ -70,7 +70,7 @@ public class AddSymptomWindow extends Stage{
 				symptomName.clear();
 				JOptionPane.showMessageDialog(null, "Record Added");
 			}catch(SQLException ex) {
-				JOptionPane.showMessageDialog(null, "error occurred - "+ ex.getMessage());			
+				JOptionPane.showMessageDialog(null, "could not add symptom");			
 			}
 			
 		}

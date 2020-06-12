@@ -73,7 +73,6 @@ public class AddJobTitleWindow {
 				jobName.clear();
 				JOptionPane.showMessageDialog(null, "Record Added");
 			} catch (SQLException ex) {
-
 				JOptionPane.showMessageDialog(null, "error occurred");
 				jobName.clear();
 			} catch (Exception ex2) {
