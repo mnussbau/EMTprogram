@@ -94,9 +94,7 @@ public class AddMemberWindow extends Stage {
 		try {
 			branches = BranchData.getBranch(dbconnection);
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			System.out.println(e1.getMessage());
-			e1.printStackTrace();
+			JOptionPane.showMessageDialog(null, "couldn't get branches");
 		}
 		String[] branchNames = new String[branches.size()];
 		for (int i = 0; i < branches.size(); i++) {
@@ -150,8 +148,7 @@ public class AddMemberWindow extends Stage {
 		try {
 			jobs = JobIO.getJobs(dbconnection);
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			JOptionPane.showMessageDialog(null, "couldn't find jobs");
 		}
 		String[] jobDescriptions = new String[jobs.size()];
 		for (int i = 0; i < jobs.size(); i++) {
@@ -212,7 +209,7 @@ public class AddMemberWindow extends Stage {
 					JOptionPane.showMessageDialog(null, "Your member id is " + memberId);
 					clearInputs();
 				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(null, e1.getMessage());
+					JOptionPane.showMessageDialog(null, "couldn't add member");
 				}
 
 			} else {

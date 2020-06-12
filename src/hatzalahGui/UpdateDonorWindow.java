@@ -53,7 +53,7 @@ public class UpdateDonorWindow {
 			donorToUpdate = DonorIO.getDonorData(db, phoneNum);
 		} catch (SQLException e) {
 			mainWindow.setScene(originalScene);
-			JOptionPane.showMessageDialog(null, "Could not connect to database" + e.getMessage());
+			JOptionPane.showMessageDialog(null, "Could not find the donor");
 			return;
 		}
 		if (donorToUpdate == null) {

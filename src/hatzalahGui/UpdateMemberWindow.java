@@ -225,7 +225,7 @@ public class UpdateMemberWindow {
 
 		} catch (SQLException e) {
 			if (input != null)
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				JOptionPane.showMessageDialog(null,"couldn't find that member");
 			mainWindow.setScene(originalScene);
 		}
 
