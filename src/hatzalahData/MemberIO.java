@@ -63,6 +63,32 @@ public class MemberIO {
 		}
 		return memberId;
 	}
+	
+	public static void updateMemberData(String memberId, String lname, Character maritalStatus, 
+			String addressStreet, String addressCity, String addressState, String addressZip, String credentialName,
+			String jobName, String phoneNumber, Character status, Connection dbconnection) throws SQLException {
+		try {
+			dbconnection.setAutoCommit(false);
+			CallableStatement cStatement = dbconnection.prepareCall("{call usp_updateMember(?,?,?,?,?,?,?,?,?,?,?)}");
+			cStatement.setString(1, memberId);
+			cStatement.setString(2, lname);
+			cStatement.setString(3, "" + maritalStatus);
+			cStatement.setString(4, addressStreet);
+			cStatement.setString(5, addressCity);
+			cStatement.setString(6, addressState);
+			cStatement.setString(7, addressZip);
+			cStatement.setString(8, credentialName);
+			cStatement.setString(9, jobName);
+			cStatement.setString(10, phoneNumber);
+			cStatement.setString(11, "" + status);
+			cStatement.execute();
+
+			dbconnection.commit();
+		} catch (SQLException e) {
+			dbconnection.rollback();
+			throw e;
+		}
+	}
 
 	public static List<Member> getMembers(Connection db) throws SQLException {
 		db.setAutoCommit(false);
@@ -129,5 +155,6 @@ public class MemberIO {
 			throw sqlE;
 		}
 	}
+	
 
 }

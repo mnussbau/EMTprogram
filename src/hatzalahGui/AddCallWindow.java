@@ -217,6 +217,10 @@ public class AddCallWindow extends Stage {
 			if(transferedCmboBx.getValue() =='N') {
 				VINtxtBx.clear();
 			}
+			if(notesTxtArea.getText().length() > 1000) {
+				JOptionPane.showMessageDialog(null, "notes cannot be greater than 1000 characters");
+				return;
+			}
 			
 			String branchName = branchNameComboBx.getValue();
 			LocalDate callReceived = dateOfCallDtPckr.getValue();
@@ -246,6 +250,8 @@ public class AddCallWindow extends Stage {
 						transfered, vin, notes, symptoms, members, equipment);
 				JOptionPane.showMessageDialog(null, "Call Succesfully added.");
 				clearInputs();
+				branchNameComboBx.setDisable(false);
+				
 			
 			} catch (SQLException sqlE) {
 				JOptionPane.showMessageDialog(null, "A problem occurred: " + sqlE.getMessage());
