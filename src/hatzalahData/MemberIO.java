@@ -109,7 +109,7 @@ public class MemberIO {
 	public static List<Member> getActiveMembers(Connection db) throws SQLException {
 		db.setAutoCommit(false);
 		Statement statement = db.createStatement();
-		ResultSet rs = statement.executeQuery("select * from member where active_status = 'I'");
+		ResultSet rs = statement.executeQuery("select * from member where active_status = 'A'");
 		List<Member> members = new ArrayList<>();
 		while (rs.next()) {
 			Member member = new Member(rs.getString("member_id"), rs.getString("fname"), rs.getString("lname"),
