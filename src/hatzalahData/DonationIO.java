@@ -40,7 +40,7 @@ public class DonationIO {
 			ResultSet rs = ps.executeQuery();
 			double totals = 0.0;
 			while (rs.next()) {
-				rs.getDouble("DonationTotal");
+				totals += rs.getDouble("DonationTotal");
 
 			}
 			return totals;
