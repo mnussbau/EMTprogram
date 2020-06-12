@@ -28,8 +28,10 @@ public class AddEquipmentWindow {
 		mainScene = mainWindow.getScene();
 
 		BorderPane borderLayout = new BorderPane();
+		borderLayout.setPrefSize(250, 100);
 		borderLayout.setStyle("-fx-background-color: Azure");
 		GridPane grid = new GridPane();
+		grid.setPadding(new Insets(10.0));
 		grid.add(new Label("Equipment Name:"), 0, 0);
 		equipNameTxtBx = new TextField();
 		grid.add(equipNameTxtBx, 0, 1);
@@ -75,7 +77,7 @@ public class AddEquipmentWindow {
 				equipNameTxtBx.clear();
 				JOptionPane.showMessageDialog(null, "Record Added");
 			} catch (SQLException ex) {
-				JOptionPane.showMessageDialog(null, "error occurred - " + ex.getMessage());
+				JOptionPane.showMessageDialog(null, "error occurred. ");
 			}
 
 		}

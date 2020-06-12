@@ -21,8 +21,10 @@ public class AddSymptomWindow extends Stage{
 		mainScene = mainWindow.getScene();
 		dbConnection = connection;
 		BorderPane borderLayout = new BorderPane();
+		borderLayout.setPrefSize(250, 100);
 		borderLayout.setStyle("-fx-background-color: Azure");
 		GridPane grid = new GridPane();
+		grid.setPadding(new Insets(10.0));
 		grid.add(new Label("Symtom Name:"), 0, 0);
 		symptomName = new TextField();
 		grid.add(symptomName, 0, 1);

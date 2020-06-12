@@ -124,8 +124,17 @@ public class MainClass extends Application {
 		mainWindow.setScene(theScene);
 		mainWindow.sizeToScene();
 		mainWindow.show();
+
+		mainWindow.setOnCloseRequest(a -> {
+			int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit the application?","Exit Confirmation", JOptionPane.YES_NO_OPTION);
+			if(choice <1) {
+				mainWindow.close();
+			}else {
+				a.consume();
+			}
 		
-		
+		});
+
 		theMenuBar.setOnMouseEntered(d -> {
 			try {
 				viewMenu.getItems().clear();
@@ -134,18 +143,11 @@ public class MainClass extends Application {
 					i.setOnAction(e -> new ViewBranchWindow(branch, mainWindow, dbconnection));
 					viewMenu.getItems().add(i);
 				});
-				
+
 			} catch (SQLException e) {
 				JOptionPane.showMessageDialog(null, "error occurred - " + e.getMessage());
 			}
 		});
-		
-
-		
-		
-		
-
-		
 
 	}
 
