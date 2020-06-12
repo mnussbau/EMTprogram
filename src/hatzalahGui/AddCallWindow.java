@@ -315,7 +315,7 @@ public class AddCallWindow extends Stage {
 					branchNameComboBx.setDisable(false);
 					return;
 				}
-				allMembers = MemberIO.getMembers(db).stream().filter(m -> m.getBranch_id() == branchId)
+				allMembers = MemberIO.getActiveMembers(db).stream().filter(m -> m.getBranch_id() == branchId)
 						.map(m -> m.getMemberId() + ": " + m.getFname() + " " + m.getLname())
 						.collect(Collectors.toList());
 			} catch (SQLException ex) {
