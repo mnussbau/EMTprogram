@@ -42,8 +42,10 @@ public class AddPurchaseWindow {
 		BorderPane layout = new BorderPane();
 		layout.setPrefSize(500, 100);
 		GridPane grid = new GridPane();
+		grid.setPadding(new Insets(10.0));
 		grid.add(new Label("Equipment Name"), 0, 0);
 		equipmentName = new TextField();
+		equipmentName.setMinWidth(100);
 		grid.add(equipmentName, 0, 1);
 		grid.add(new Label("Branch Name"), 1, 0);
 		
@@ -55,6 +57,7 @@ public class AddPurchaseWindow {
 		}
 		branchName = new ComboBox<String>(FXCollections.observableArrayList(newBranches));
 		branchName.setStyle("-fx-background-color: Lavender");
+		branchName.setMinWidth(100);
 		grid.add(branchName, 1, 1);
 		grid.add(new Label("Quantity"), 2, 0);
 		qty = new TextField();
@@ -152,5 +155,6 @@ class AddPurchaseController implements EventHandler<ActionEvent>{
 		equipmentName.clear();
 		qty.clear();
 		purchaseDate.setValue(LocalDate.now());
+		price.clear();
 	}
 }

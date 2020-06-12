@@ -28,7 +28,7 @@ public class EquipmentIO {
 		try {
 			db.setAutoCommit(false);
 			CallableStatement stmt;
-			String sql = "{call AddEquipment(?)}";
+			String sql = "{call usp_AddEquipment(?)}";
 			stmt = db.prepareCall(sql);
 			stmt.setString(1, equipName);
 			stmt.execute();

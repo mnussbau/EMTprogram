@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 
 import hatzalahBusiness.Address;
 import hatzalahBusiness.Donor;
+import hatzalahData.AddressIO;
 import hatzalahData.DonorIO;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -42,7 +43,7 @@ public class UpdateDonorWindow {
 		this.mainWindow = mainWindow;
 		this.db = db;
 		originalScene = mainWindow.getScene();
-		
+
 		phoneNum = JOptionPane.showInputDialog(null, "Please enter the donor phone number.");
 		if (phoneNum == null) {
 			mainWindow.setScene(originalScene);
@@ -52,16 +53,15 @@ public class UpdateDonorWindow {
 			donorToUpdate = DonorIO.getDonorData(db, phoneNum);
 		} catch (SQLException e) {
 			mainWindow.setScene(originalScene);
-			JOptionPane.showMessageDialog(null, "Could not connect to database"+e.getMessage());
+			JOptionPane.showMessageDialog(null, "Could not connect to database" + e.getMessage());
 			return;
 		}
 		if (donorToUpdate == null) {
 			mainWindow.setScene(originalScene);
 			JOptionPane.showMessageDialog(null, "Phone number not found.");
 			return;
-		}	
-		
-		
+		}
+
 		BorderPane layout = new BorderPane();
 		GridPane grid = new GridPane();
 
@@ -76,8 +76,12 @@ public class UpdateDonorWindow {
 		grid.add(new Label("Phone Number"), 2, 0);
 		phoneNumberTxtBx = new TextField(donorToUpdate.getDonor_phone_num());
 		grid.add(phoneNumberTxtBx, 2, 1);
-		//address = AddressIO.getAddress(db, memberToUpdate.getAddress_id());
-		address = new Address(12, "bklyn", "here", "NJ", "11210");
+		try {
+			address = AddressIO.getAddress(db, donorToUpdate.getDonor_addr_id());
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, "Information did not load properly.");
+			mainWindow.setScene(originalScene);
+		}
 		grid.add(new Label("Street Address"), 0, 2);
 		streetAddressTxtBx = new TextField(address.getAddrStreet());
 		grid.add(streetAddressTxtBx, 0, 3);
@@ -117,11 +121,6 @@ public class UpdateDonorWindow {
 
 	}
 
-	public void findDonor() {
-		
-
-	}
-
 	class OkButton_click implements EventHandler<ActionEvent> {
 		Connection db;
 
@@ -146,7 +145,7 @@ public class UpdateDonorWindow {
 			String addrCity = cityTxtBx.getText();
 			String addrState = stateCmboBx.getValue();
 			String addrZip = zipTxtBx.getText();
-			
+
 			try {
 				DonorIO.updateDonorData(db, identifyingPhoneNum, lname, newPhoneNum, addrStrt, addrCity, addrState,
 						addrZip);
@@ -154,10 +153,8 @@ public class UpdateDonorWindow {
 				mainWindow.setScene(originalScene);
 
 			} catch (SQLException e) {
-				JOptionPane.showMessageDialog(null, "error: " + e.getMessage());
-
+				JOptionPane.showMessageDialog(null, "Error. Could not update.");
 			}
-			
 
 		}
 
@@ -167,7 +164,7 @@ public class UpdateDonorWindow {
 					|| stateCmboBx.getValue() == null || zipTxtBx.getText().isBlank()) {
 				return true;
 			}
-				return false;
+			return false;
 		}
 
 	}
