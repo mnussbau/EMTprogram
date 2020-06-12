@@ -69,6 +69,7 @@ public class AddDonorWindow {
 		okButton.setOnAction(e ->{
 			if(!(fname.getText().isBlank()|| lname.getText().isBlank() || phoneNumber.getText().isBlank() ||
 					streetAddress.getText().isBlank() || city.getText().isBlank() || zip.getText().isBlank())) {
+				if(phoneNumber.getText().length() == 10) {
 				try {
 					DonorIO.addDonorData(fname.getText(), lname.getText(), phoneNumber.getText(), 
 							streetAddress.getText(), city.getText(), state.getValue(), zip.getText(), dbconnection);
@@ -76,6 +77,9 @@ public class AddDonorWindow {
 					clearInputs();
 				} catch (SQLException e1) {
 					JOptionPane.showMessageDialog(null, e1.getMessage());
+				}
+				}else {
+					JOptionPane.showMessageDialog(null, "Please enter 10 digits for the phone number");
 				}
 			}else {
 				JOptionPane.showMessageDialog(null, "Please fill in all fields");

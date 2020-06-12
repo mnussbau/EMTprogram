@@ -89,10 +89,10 @@ public class UpdateMemberWindow {
 		originalScene = mainWindow.getScene();
 		BorderPane layout = new BorderPane();
 		GridPane grid = new GridPane();
-		
+
 		String idLabel = "Please enter your id";
-		String input = JOptionPane.showInputDialog(null, idLabel);  
-		
+		String input = JOptionPane.showInputDialog(null, idLabel);
+
 		try {
 			Member memberToUpdate = MemberIO.getMember(input, dbconnection);
 			grid.add(new Label("Member ID"), 0, 0);
@@ -122,12 +122,13 @@ public class UpdateMemberWindow {
 			Character[] ms = { 'S', 'M', 'D', 'W' };
 			maritalStatus = new ComboBox<Character>((FXCollections.observableArrayList(ms)));
 			maritalStatus.setValue(memberToUpdate.getMaritalStatus());
-			maritalStatus
-					.setStyle("-fx-background-color: Lavender;-fx-border-color: MEDIUMPURPLE;-fx-border-width: 1 1 1 1;");
+			maritalStatus.setStyle(
+					"-fx-background-color: Lavender;-fx-border-color: MEDIUMPURPLE;-fx-border-width: 1 1 1 1;");
 			maritalStatus.setMaxWidth(150);
 			grid.add(maritalStatus, 5, 1);
 			grid.add(new Label("Branch Name"), 0, 2);
-			branchName = new ComboBox<String>(FXCollections.observableArrayList(BranchData.getBranch(dbconnection).stream().map(b->b.getBranchName()).collect(Collectors.toList())));
+			branchName = new ComboBox<String>(FXCollections.observableArrayList(BranchData.getBranch(dbconnection)
+					.stream().map(b -> b.getBranchName()).collect(Collectors.toList())));
 			branchName.setValue(BranchData.getBranchName(dbconnection, memberToUpdate.getBranch_id()));
 			branchName.setMaxWidth(150);
 			branchName.setDisable(true);
@@ -138,12 +139,14 @@ public class UpdateMemberWindow {
 			dateJoined.setDisable(true);
 			grid.add(dateJoined, 1, 3);
 			grid.add(new Label("Credential"), 2, 2);
-			credentialName = new ComboBox<String>(FXCollections.observableArrayList(CredentialIO.getCredentials(dbconnection).stream().map(c -> c.getDescription()).collect(Collectors.toList())));
+			credentialName = new ComboBox<String>(FXCollections.observableArrayList(CredentialIO
+					.getCredentials(dbconnection).stream().map(c -> c.getDescription()).collect(Collectors.toList())));
 			credentialName.setValue(CredentialIO.getCredentialName(dbconnection, memberToUpdate.getCredential_id()));
 			credentialName.setMaxWidth(174);
 			grid.add(credentialName, 2, 3);
 			grid.add(new Label("Job Name"), 3, 2);
-			jobName = new ComboBox<String>(FXCollections.observableArrayList(JobIO.getJobs(dbconnection).stream().map(j -> j.getDescription()).collect(Collectors.toList())));
+			jobName = new ComboBox<String>(FXCollections.observableArrayList(
+					JobIO.getJobs(dbconnection).stream().map(j -> j.getDescription()).collect(Collectors.toList())));
 			jobName.setValue(JobIO.getJobName(dbconnection, memberToUpdate.getJob_id()));
 			jobName.setMaxWidth(150);
 			grid.add(jobName, 3, 3);
@@ -164,11 +167,11 @@ public class UpdateMemberWindow {
 			city.setText(address.getAddrCity());
 			grid.add(city, 1, 5);
 			grid.add(new Label("State"), 2, 4);
-			
-			String[] listOfStates = { "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN",
-					"IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM",
-					"NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV",
-					"WI", "WY" };
+
+			String[] listOfStates = { "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL",
+					"IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH",
+					"NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT",
+					"VA", "WA", "WV", "WI", "WY" };
 			state = new ComboBox<String>(FXCollections.observableArrayList(listOfStates));
 			state.setValue(address.getAddrState());
 			state.resize(150, 150);
@@ -178,33 +181,34 @@ public class UpdateMemberWindow {
 			zip = new TextField();
 			zip.setText(address.getZip());
 			grid.add(zip, 3, 5);
-			
-			
+
 			Button okButton = new Button("OK");
 			okButton.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
-//			okButton.setOnAction(e -> {
-//				if (!(fname.getText().isBlank() || lname.getText().isBlank() || phoneNum.getText().isBlank()
-//						|| branchName.getValue().equals("Add Branch") || credentialName.getValue().equals("Add Credential")
-//						|| jobName.getValue().equals("Add Job") || street.getText().isBlank() || city.getText().isBlank()
-//						|| zip.getText().isBlank())) {
-//					String memberId;
-//					try {
-//						memberId = MemberIO.addMemberData(fname.getText(), lname.getText(), phoneNum.getText(),
-//								bday.getValue(), maritalStatus.getValue(),
-	//
-//								branchName.getValue(), dateJoined.getValue(), credentialName.getValue(), jobName.getValue(),
-//								status.getValue(), street.getText(), city.getText(), state.getValue(), zip.getText(),
-//								dbconnection);
-//						JOptionPane.showMessageDialog(null, "Your member id is " + memberId);
-//						clearInputs();
-//					} catch (SQLException e1) {
-//						JOptionPane.showMessageDialog(null, e1.getMessage());
-//					}
-	//
-//				} else {
-//					JOptionPane.showInternalMessageDialog(null, "Please fill out all fields");
-//				}
-//			});
+			okButton.setOnAction(e -> {
+				if (!(fname.getText().isBlank() || lname.getText().isBlank() || phoneNum.getText().isBlank()  
+						|| branchName.getValue().equals("Add Branch")
+						|| credentialName.getValue().equals("Add Credential") || jobName.getValue().equals("Add Job")
+						|| street.getText().isBlank() || city.getText().isBlank() || zip.getText().isBlank())) {
+					if(phoneNum.getText().length() == 10) {
+					try {
+						MemberIO.updateMemberData(memberId.getText(), lname.getText(),
+								maritalStatus.getValue(), street.getText(), city.getText(), state.getValue(),
+								zip.getText(), credentialName.getValue(), jobName.getValue(), phoneNum.getText(),
+								status.getValue(), dbconnection);
+						JOptionPane.showMessageDialog(null, memberId.getText() + " successfully updated!");
+						clearInputs();
+						mainWindow.setScene(originalScene);
+					} catch (SQLException e1) {
+						JOptionPane.showMessageDialog(null, e1.getMessage());
+					}
+					}else {
+						JOptionPane.showMessageDialog(null, "Please enter 10 digits for the phone number");
+					}
+
+				} else {
+					JOptionPane.showInternalMessageDialog(null, "Please fill out all fields");
+				}
+			});
 			Button backButton = new Button("Back");
 			backButton.setStyle("-fx-background-color: Lavender;-fx-border-color: Teal; -fx-border-width: 1 1 1 1;");
 			backButton.setOnAction(e -> mainWindow.setScene(originalScene));
@@ -218,27 +222,22 @@ public class UpdateMemberWindow {
 			Scene thisScene = new Scene(layout);
 			mainWindow.setScene(thisScene);
 			mainWindow.sizeToScene();
-			
+
 		} catch (SQLException e) {
-			if(input != null)
+			if (input != null)
 				JOptionPane.showMessageDialog(null, e.getMessage());
 			mainWindow.setScene(originalScene);
-		} 
-			
-		
-		
-		
-		
-		
-		
-		
+		}
 
-		
+	}
 
-		
-		
-		
-		
-		
-	}	
+	private void clearInputs() {
+		fname.clear();
+		lname.clear();
+		phoneNum.clear();
+		street.clear();
+		city.clear();
+		zip.clear();
+
+	}
 }
